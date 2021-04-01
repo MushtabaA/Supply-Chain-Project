@@ -35,7 +35,7 @@ CREATE TABLE CHAIR (
 );
 
 INSERT INTO CHAIR (ID, Type, Legs, Arms, Seat, Cushion, Price, ManuID)
-VALUES
+VALUES 
 ('C1320',	'Kneeling',	'Y',	'N',	'N',	'N',	50,	'002'),
 ('C3405',	'Task',	'Y',	'Y',	'N',	'N',	100,	'003'),
 ('C9890',	'Mesh',	'N',	'Y',	'N',	'Y',	50,	'003'),
@@ -46,12 +46,12 @@ VALUES
 ('C5789',	'Ergonomic',	'Y',	'N',	'N',	'Y',	125,	'003'),
 ('C3819',	'Kneeling',	'N',	'N',	'Y',	'N',	75,	'005'),
 ('C5784',	'Executive',	'Y',	'N',	'N',	'Y',	150,	'004'),
-('C6748',	'Mesh',	'Y',	'N',	'N',	'N',	75,	'003'),
+('C6748',	'Mesh',	'Y',	'N',	'N',	'N',	75,	'003'),	
 ('C0914',	'Task',	'N',	'N',	'Y',	'Y',	50,	'002'),
 ('C1148',	'Task',	'Y',	'N',	'Y',	'Y',	125,	'003'),
 ('C5409',	'Ergonomic',	'Y',	'Y',	'Y',	'N',	200,	'003'),
 ('C8138',	'Mesh',	'N',	'N',	'Y',	'N',	75,	'005');
-
+ 
 DROP TABLE IF EXISTS DESK;
 CREATE TABLE DESK (
 	ID				char(5)	not null,

@@ -1,7 +1,7 @@
 package edu.ucalgary.ensf409;
 
 public class UserInput {
-	
+
     /////////// DATA MEMBERS (ALL PRIVATE):
 
     // DBURL: String (FINAL)
@@ -12,9 +12,8 @@ public class UserInput {
     // FurnitureInput: String (Use regex later)
     // FurnitureCategory: String
     // FurnitureType: String
-    // FurnitureQuantity: Int
+    // FurnitureQuantity: Int 
 
-    
     ////////// METHODS:
 
     // userInput CTOR:
@@ -36,12 +35,13 @@ public class UserInput {
     // Params (FurnitureInput: String)
     // 3 regex strings for each group
     // Use Matcher/Pattern to set each group to the 3 data members
-    // Category, Type, and Quantity
+    // category, type, and quantity
     // Don't forget to convert Quantity from string to int (ParseInt)
-    // "([a-zA-Z]+) ([a-zA-Z]+) ([0-9]+)", create local data members for these
+    // "([a-zA-Z]+) ([a-zA-Z]+), ([0-9]+)", create local data members for these
     // Check if it is desk, lamp, chair, etc
     // Then call the related class' constructor, and then pass in all 3
     // local data members (the category, type, and quantity)
+    // Ex: Chair(category, type, quantity)
 
     // userMenu:
     // Data Members: Username, Password, URL (All Strings)
@@ -52,13 +52,9 @@ public class UserInput {
     // Call initializeConnection Method (With try, catch statement)
     // Print Out: "Enter your order request like the following example:
     // "mesh chair, 2", and set furniture input (using the setter)
-    // Call the regex function 
+    // Call the splitOrder function
 
-
-
-    // jdbc:mysql://127.0.0.1/COMPETITION  
-    //localhost/COMPETITION 
-
+    // jdbc:mysql://127.0.0.1/COMPETITION
+    // localhost/COMPETITION
 
 }
-
