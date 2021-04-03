@@ -22,7 +22,7 @@ public class UserInput {
     // userInput CTOR:
     // Default Ctor, Params - none
 
-    // Getters for all data members:
+    // Getters for all data members: 
     // Setters for all data members:
 
     // close:
