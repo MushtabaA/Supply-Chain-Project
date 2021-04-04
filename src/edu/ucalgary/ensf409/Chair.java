@@ -259,19 +259,30 @@ public class Chair {
             }
              */
 
+            ////////// New Method for numberOfParts
+             /**
+              * public int numberOfParts(int quantity) {
+                int value = 0;
+                value += quantity;
+                return value;
+              }
+              */
+
              ///////// New Method for checkPrice: 
              /**
               *   public int checkPrice() {
-            boolean hasLegs = false;
-            boolean hasArms = false;
-            boolean hasSeat = false;
-            boolean hasCushion = false;
-            boolean isRepeated = false;
             int priceSum = 0;
+            int maxParts = numberOfParts(quantity);
+            int numOfLegs = 0;
+            int numOfArms = 0;
+            int numOfSeats = 0;
+            int numOfCushions = 0;
+            int trigger = 0;
+            boolean empty = false;
 
-            for (int i = 0; i < input.size(); i++) {
+            for (int i = 0; i < input.size(); i++) { 
 
-                if (hasLegs == true && hasArms == true && hasSeat == true && hasCushion == true) {
+                if (numOfLegs == maxParts && numOfArms == maxParts && numOfSeats == maxParts && numOfCushions == maxParts) {
                     break;
                 }
 
@@ -289,46 +300,53 @@ public class Chair {
                     Statement stmnt = createConnection.createStatement();
                     rs = stmnt.executeQuery("SELECT * FROM CHAIR WHERE ID = " +  "'" + idString + "'");
                     while(rs.next()) {
-                        if (rs.getString("Legs").equals("Y") && hasLegs == true) {
-                            isRepeated = true;
-                            break;
-                        }
-                        if (rs.getString("Arms").equals("Y") && hasArms == true) {
-                            isRepeated = true;
-                            break;
-                        }
-                        if (rs.getString("Seat").equals("Y") && hasSeat == true) {
-                            isRepeated = true;
-                            break;
-                        }
-                        if (rs.getString("Cushion").equals("Y") && hasCushion == true) {
-                            isRepeated = true;
+                        if (rs.getString("Legs").equals("N") && rs.getString("Arms").equals("N") 
+                        && rs.getString("Seat").equals("N") && rs.getString("Cushion").equals("N")) {
+                            empty = true;
                             break;
                         }
                         if (rs.getString("Legs").equals("Y")) {
-                            isRepeated = false;
-                            hasLegs = true;
+                            numOfLegs++;
+                            if(numOfLegs > maxParts) {
+                                numOfLegs--;
+                                trigger += 1;
+                            }
                         }
                         if (rs.getString("Arms").equals("Y")) {
-                            isRepeated = false;
-                            hasArms = true;
+                            numOfArms++;
+                            if(numOfArms > maxParts) {
+                                numOfArms--;
+                                trigger += 1;
+                            }
                         }
                         if (rs.getString("Seat").equals("Y")) {
-                            isRepeated = false;
-                            hasSeat = true;
+                            numOfSeats++;
+                            if(numOfSeats > maxParts) {
+                                numOfSeats--;
+                                trigger += 1;
+                            }
                         }
                         if (rs.getString("Cushion").equals("Y")) {
-                            isRepeated = false;
-                            hasCushion = true;
+                            numOfCushions++;
+                            if(numOfCushions > maxParts) {
+                                numOfCushions--;
+                                trigger += 1;
+                            }
                         }
                     }
-//chair check
-                    if (isRepeated) {
+//chair check       
+                    if (empty) {
+                        empty = false;
                         continue;
                     }
-                    if (hasLegs == true || hasArms == true || hasSeat == true || hasCushion == true) {
-                        priceSum += priceInt;
-                        removeParts.add(idString);
+                    if (trigger == 4) {
+                        trigger = 0;
+                        continue;
+                    } else {
+                        if (numOfLegs > 0 || numOfArms > 0 || numOfSeats > 0 || numOfCushions > 0) {
+                            priceSum += priceInt;
+                            removeParts.add(idString);
+                        }
                     }
                     stmnt.close();
                 } catch (SQLException e) {
