@@ -35,23 +35,23 @@ CREATE TABLE CHAIR (
 );
 
 INSERT INTO CHAIR (ID, Type, Legs, Arms, Seat, Cushion, Price, ManuID)
-VALUES 
+VALUES
 ('C1320',	'Kneeling',	'Y',	'N',	'N',	'N',	50,	'002'),
 ('C3405',	'Task',	'Y',	'Y',	'N',	'N',	100,	'003'),
 ('C9890',	'Mesh',	'N',	'Y',	'N',	'Y',	50,	'003'),
 ('C7268',	'Executive',	'N',	'N',	'Y',	'N',	75,	'004'),
-('C0942',	'Mesh',	'Y',	'N',	'Y',	'Y',	100,	'005'),
+('C0942',	'Mesh',	'Y',	'N',	'Y',	'Y',	175,	'005'),
 ('C4839',	'Ergonomic',	'N',	'N',	'N',	'Y',	50,	'002'),
 ('C2483',	'Executive',	'Y',	'Y',	'N',	'N',	175,	'002'),
 ('C5789',	'Ergonomic',	'Y',	'N',	'N',	'Y',	125,	'003'),
 ('C3819',	'Kneeling',	'N',	'N',	'Y',	'N',	75,	'005'),
 ('C5784',	'Executive',	'Y',	'N',	'N',	'Y',	150,	'004'),
-('C6748',	'Mesh',	'Y',	'N',	'N',	'N',	75,	'003'),	
+('C6748',	'Mesh',	'Y',	'N',	'N',	'N',	75,	'003'),
 ('C0914',	'Task',	'N',	'N',	'Y',	'Y',	50,	'002'),
 ('C1148',	'Task',	'Y',	'N',	'Y',	'Y',	125,	'003'),
 ('C5409',	'Ergonomic',	'Y',	'Y',	'Y',	'N',	200,	'003'),
 ('C8138',	'Mesh',	'N',	'N',	'Y',	'N',	75,	'005');
- 
+
 DROP TABLE IF EXISTS DESK;
 CREATE TABLE DESK (
 	ID				char(5)	not null,
@@ -80,7 +80,7 @@ VALUES
 ('D1927',	'Standing',	'Y',	'N',	'Y',	200,	'005'),
 ('D1030',	'Adjustable',	'N',	'Y',	'N',	150,	'002'),
 ('D4438',	'Standing',	'N',	'Y',	'Y',	150,	'004'),
-('D5437',	'Adjustable',	'Y',	'N',	'N',	50,	'001'),
+('D5437',	'Adjustable',	'Y',	'N',	'N',	200,	'001'),
 ('D3682',	'Adjustable',	'N',	'N',	'Y',	50,	'005');
 
 DROP TABLE IF EXISTS LAMP;
@@ -136,7 +136,7 @@ VALUES
 ('F006',	'Small',	'Y',	'Y',	'N',	50,	'005'),
 ('F007',	'Medium',	'N',	'Y',	'Y',	150,	'002'),
 ('F008',	'Medium',	'Y',	'N',	'N',	50,	'005'),
-('F009',	'Medium',	'Y',	'Y',	'N',	150,	'004'),
+('F009',	'Medium',	'Y',	'Y',	'N',	100,	'004'),
 ('F010',	'Large',	'Y',	'N',	'Y',	225,	'002'),
 ('F011',	'Large',	'N',	'Y',	'Y',	225,	'005'),
 ('F012',	'Large',	'N',	'Y',	'N',	75,	'005'),
