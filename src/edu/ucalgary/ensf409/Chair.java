@@ -52,7 +52,7 @@ public class Chair extends Main {
         Statement stmnt;
         try {
             stmnt = createConnection.createStatement();
-            ResultSet rs = stmnt.executeQuery("SELECT * FROM CHAIR WHERE Type = 'Mesh'");
+            ResultSet rs = stmnt.executeQuery("SELECT * FROM CHAIR WHERE Type = '?'");
     
             while (rs.next()) {
                 input.add(rs.getString("Price") + "_" + rs.getString("ID") + "_" + rs.getString("ManuID")); 
