@@ -125,9 +125,19 @@ public class Main {
 	// "mesh chair, 2", and set furniture input (using the setter)
 	// Call the splitOrder function
 	public void userMenu() {
-		sc = new Scanner(System.in);
-		System.out.println("");
+		sc = new Scanner(System.in); 
+		System.out.println("Enter Username for the Database access: ");
+		this.USERNAME = sc.nextLine(); 
+
+		System.out.println("Enter Password for the Database access: ");
+		this.PASSWORD = sc.nextLine(); 
+
+		System.out.println("The URL for the connection is this following: jdbc:mysql://localhost/inventory" + USERNAME + PASSWORD);
 		
+		System.out.println("Enter your order request like the following (mesh chair, 2):  ");
+		this.furnitureInput = sc.nextLine(); 
+		splitOrder(furnitureInput);
+	
 		// Set each variable to password, username, and url strings above 
 	}
 	
