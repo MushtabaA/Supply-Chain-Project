@@ -25,7 +25,15 @@ public class Main {
      */
     public String PASSWORD; //store the user's account password
 
-    public String furnitureInput;
+   	public String furnitureInput;
+
+	public String getFurnitureInput() {
+		return this.furnitureInput;
+	}
+
+	public void setFurnitureInput(String furnitureInput) {
+		this.furnitureInput = furnitureInput;
+	}
     
     public String furnitureCategory;
     
@@ -136,6 +144,7 @@ public class Main {
 		
 		System.out.println("Enter your order request like the following (mesh chair, 2):  ");
 		this.furnitureInput = sc.nextLine(); 
+		furnitureInput.toLowerCase();
 		splitOrder(furnitureInput);
 	
 		// Set each variable to password, username, and url strings above 

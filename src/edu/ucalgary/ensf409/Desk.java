@@ -9,9 +9,33 @@ import java.sql.*;
 public class Desk extends Main {
 
     /////// DATA MEMBERS:
-    final String category;
-    final String type;
-    final int quantity;
+     String category;
+     String type;
+     int quantity;
+
+    public String getCategory() {
+        return this.category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getType() {
+        return this.type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public int getQuantity() {
+        return this.quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
     static ArrayList<String> input = new ArrayList<>();
    
     // category: String
