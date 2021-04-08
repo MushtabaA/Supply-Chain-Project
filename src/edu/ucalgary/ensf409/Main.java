@@ -3,6 +3,7 @@ package edu.ucalgary.ensf409;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.sql.*;
+import java.util.Scanner;
 
 public class Main {
 
@@ -40,6 +41,11 @@ public class Main {
      */
     public ResultSet rs;
 
+	/**
+	 * 
+	 * New instance of the Scanner object 
+	 */
+	private Scanner sc;
 	    // Getters for all data members: 
      /**
      * getDburl retervie the data
@@ -63,6 +69,30 @@ public class Main {
      */
     public String getPassword() {
         return this.PASSWORD;
+    }
+	//Gets Furniture type
+	public String getFurnitureType() {
+        return this.furnitureType;
+    }
+	//Gets Furniture category
+
+    public String getFurnitureCategory(){
+        return this.furnitureCategory;
+    }
+	//Gets Furniture quantity
+    public int getFurnitureQuantity(){
+        return this.furnitureQuantity;
+    }
+	//Start of setters 
+	public String setFurnitureType(String furnitureType) {
+        return this.furnitureType;
+    }
+
+    public String setFurnitureCategory(String furnitureCategory){
+        return this.furnitureCategory;
+    }
+    public int setFurnitureQuantity(String furnitureQuantity){
+        return this.furnitureQuantity;
     }
 
 	public void initializeConnection() {
@@ -95,6 +125,7 @@ public class Main {
 	// "mesh chair, 2", and set furniture input (using the setter)
 	// Call the splitOrder function
 	public void userMenu() {
+		sc = new Scanner(System.in);
 		System.out.println("");
 		
 		// Set each variable to password, username, and url strings above 
@@ -132,16 +163,7 @@ public class Main {
 		}
 	}
 
-	public String getFurnitureType() {
-        return this.furnitureType;
-    }
 
-    public String getFurnitureCategory(){
-        return this.furnitureCategory;
-    }
-    public int getFurnitureQuantity(){
-        return this.furnitureQuantity;
-    }
 	public static void main(String[] args) {
 
 		Main main = new Main();

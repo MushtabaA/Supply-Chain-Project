@@ -5,7 +5,7 @@ import java.util.regex.Matcher;
 import java.util.ArrayList;
 import java.sql.*;
 
-public class Lamp {
+public class Lamp extends Main {
 /////// DATA MEMBERS:
 final String category;
 final String type;

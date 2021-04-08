@@ -6,7 +6,7 @@ import java.io.*;
 import java.util.*;
 
 public class UserOutputTest {
-    public final static String DIR = "data";
+  public final static String DIR = "data";
   public final static String FILE = "out.dat";
   @Test
   // writeFile creates a file
