@@ -2,6 +2,7 @@ package edu.ucalgary.ensf409;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.io.IOException;
 import java.sql.*;
 import java.util.Scanner;
 
@@ -13,19 +14,19 @@ public class Main {
 	static Filing oneFiling;
 
 	/**
-     * Database url of the following format jdbc:subprotocol:subname
-     */
-    public String DBURL; //store the database url information
-    /**
-     * Database user on whose behalf the connection will be made
-     */
-    public String USERNAME; //store the user's account username
-    /**
-     * User's password
-     */
-    public String PASSWORD; //store the user's account password
+	 * Database url of the following format jdbc:subprotocol:subname
+	 */
+	public String DBURL; // store the database url information
+	/**
+	 * Database user on whose behalf the connection will be made
+	 */
+	public String USERNAME; // store the user's account username
+	/**
+	 * User's password
+	 */
+	public String PASSWORD; // store the user's account password
 
-   	public String furnitureInput;
+	public String furnitureInput;
 
 	public String getFurnitureInput() {
 		return this.furnitureInput;
@@ -34,89 +35,106 @@ public class Main {
 	public void setFurnitureInput(String furnitureInput) {
 		this.furnitureInput = furnitureInput;
 	}
-    
-    public String furnitureCategory;
-    
-    public String furnitureType;
 
-    public int furnitureQuantity;
-	    /**
-     * New instance of the connection type
-     */
-    public Connection createConnection;
-    /**
-     * New instance of the result set object
-     */
-    public ResultSet rs;
+	public String furnitureCategory;
+
+	public String furnitureType;
+
+	public int furnitureQuantity;
+	/**
+	 * New instance of the connection type
+	 */
+	public Connection createConnection;
+
+	public Connection getCreateConnection() {
+		return this.createConnection;
+	}
+
+	public void setCreateConnection(Connection createConnection) {
+		this.createConnection = createConnection;
+	}
+
+	/**
+	 * New instance of the result set object
+	 */
+	public ResultSet rs;
 
 	/**
 	 * 
-	 * New instance of the Scanner object 
+	 * New instance of the Scanner object
 	 */
 	private Scanner sc;
-	    // Getters for all data members: 
-     /**
-     * getDburl retervie the data
-     * @return the database URL is given back
-     */
-    public String getDburl() {
-        return this.DBURL;
-    }
 
-    /**
-     * getUsername retervies the data
-     * @return the username of the database user
-     */
-    public String getUsername() {
-        return this.USERNAME;
-    }
+	// Getters for all data members:
+	/**
+	 * getDburl retervie the data
+	 * 
+	 * @return the database URL is given back
+	 */
+	public String getDburl() {
+		return this.DBURL;
+	}
 
-    /**
-     * getPassword
-     * @return the password of the database user
-     */
-    public String getPassword() {
-        return this.PASSWORD;
-    }
-	//Gets Furniture type
+	/**
+	 * getUsername retervies the data
+	 * 
+	 * @return the username of the database user
+	 */
+	public String getUsername() {
+		return this.USERNAME;
+	}
+
+	/**
+	 * getPassword
+	 * 
+	 * @return the password of the database user
+	 */
+	public String getPassword() {
+		return this.PASSWORD;
+	}
+
+	// Gets Furniture type
 	public String getFurnitureType() {
-        return this.furnitureType;
-    }
-	//Gets Furniture category
+		return this.furnitureType;
+	}
+	// Gets Furniture category
 
-    public String getFurnitureCategory(){
-        return this.furnitureCategory;
-    }
-	//Gets Furniture quantity
-    public int getFurnitureQuantity(){
-        return this.furnitureQuantity;
-    }
-	//Start of setters 
+	public String getFurnitureCategory() {
+		return this.furnitureCategory;
+	}
+
+	// Gets Furniture quantity
+	public int getFurnitureQuantity() {
+		return this.furnitureQuantity;
+	}
+
+	// Start of setters
 	public String setFurnitureType(String furnitureType) {
-        return this.furnitureType;
-    }
+		return this.furnitureType;
+	}
 
-    public String setFurnitureCategory(String furnitureCategory){
-        return this.furnitureCategory;
-    }
-    public int setFurnitureQuantity(String furnitureQuantity){
-        return this.furnitureQuantity;
-    }
+	public String setFurnitureCategory(String furnitureCategory) {
+		return this.furnitureCategory;
+	}
+
+	public int setFurnitureQuantity(String furnitureQuantity) {
+		return this.furnitureQuantity;
+	}
 
 	public void initializeConnection() {
-        try {
-            createConnection = DriverManager.getConnection(getDburl(), getUsername(), getPassword());
-        } catch (SQLException e) {
-            System.out.println("Connection was failed try again.");
-            e.printStackTrace();
-        }
-    }
-	
+		try {
+			createConnection = DriverManager.getConnection(getDburl(), getUsername(), getPassword());
+		} catch (SQLException e) {
+			System.out.println("Connection was failed try again.");
+			e.printStackTrace();
+		}
+	}
+
 	public void close() {
 		try {
 			createConnection.close();
 			rs.close();
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -133,23 +151,25 @@ public class Main {
 	// "mesh chair, 2", and set furniture input (using the setter)
 	// Call the splitOrder function
 	public void userMenu() {
-		sc = new Scanner(System.in); 
+
+		sc = new Scanner(System.in);
 		System.out.println("Enter Username for the Database access: ");
-		this.USERNAME = sc.nextLine(); 
+		this.USERNAME = sc.nextLine();
 
 		System.out.println("Enter Password for the Database access: ");
-		this.PASSWORD = sc.nextLine(); 
+		this.PASSWORD = sc.nextLine();
 
-		System.out.println("The URL for the connection is this following: jdbc:mysql://localhost/inventory" + USERNAME + PASSWORD);
-		
-		System.out.println("Enter your order request like the following (mesh chair, 2):  ");
-		this.furnitureInput = sc.nextLine(); 
+		System.out.println(
+				"The URL for the connection is this following: jdbc:mysql://localhost/inventory" + USERNAME + PASSWORD);
+		this.DBURL = "jdbc:mysql://localhost/inventory";
+		System.out.println("Enter your order request like the following: (mesh chair, 2):  ");
+		this.furnitureInput = sc.nextLine();
 		furnitureInput.toLowerCase();
 		splitOrder(furnitureInput);
-	
-		// Set each variable to password, username, and url strings above 
+
+		// Set each variable to password, username, and url strings above
 	}
-	
+
 	// splitOrder:
 	// Params (FurnitureInput: String)
 	// 3 regex strings for each group
@@ -165,7 +185,7 @@ public class Main {
 		final String REGEX = "([a-zA-Z]+)";
 		final Pattern PATTERN = Pattern.compile(REGEX);
 
-		final String REGEX2 = "([a-zA-Z]+)";
+		final String REGEX2 = "(?<=\s)[a-zA-Z][^,]*";
 		final Pattern PATTERN2 = Pattern.compile(REGEX2);
 
 		final String REGEX3 = "([0-9]+)";
@@ -182,29 +202,35 @@ public class Main {
 		}
 	}
 
-
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
 		Main main = new Main();
 
 		main.userMenu();
-		
-		if (main.getFurnitureType().equals("Chair")) {
-			oneChair = new Chair(main.getFurnitureCategory(), main.getFurnitureType(), main.getFurnitureQuantity());
-		} else if (main.getFurnitureType().equals("Desk")) {
-		 	oneDesk = new Desk(main.getFurnitureCategory(), main.getFurnitureType(), main.getFurnitureQuantity());
+		main.initializeConnection();
 
-		} else if (main.getFurnitureType().equals("Lamp")) {
-		 	oneLamp = new Lamp(main.getFurnitureCategory(), main.getFurnitureType(), main.getFurnitureQuantity());
+		// if (main.getFurnitureType().equals("Chair")) {
+		// oneChair = new Chair(main.getFurnitureCategory(), main.getFurnitureType(),
+		// main.getFurnitureQuantity());
+		// } else if (main.getFurnitureType().equals("Desk")) {
+		// oneDesk = new Desk(main.getFurnitureCategory(), main.getFurnitureType(),
+		// main.getFurnitureQuantity());
 
-		} else if (main.getFurnitureType().equals("Filing")) {
-		 	oneFiling = new Filing(main.getFurnitureCategory(), main.getFurnitureType(), main.getFurnitureQuantity());
-		}
+		// } else if (main.getFurnitureType().equals("Lamp")) {
+		// oneLamp = new Lamp(main.getFurnitureCategory(), main.getFurnitureType(),
+		// main.getFurnitureQuantity());
 
-        main.initializeConnection();
+		// } else if (main.getFurnitureType().equals("Filing")) {
+		// oneFiling = new Filing(main.getFurnitureCategory(), main.getFurnitureType(),
+		// main.getFurnitureQuantity());
+		// }
+
+		Chair chair = new Chair(main.getFurnitureCategory(), main.getFurnitureType(), main.getFurnitureQuantity(), main.DBURL, main.USERNAME, main.PASSWORD);
+
+		chair.callEverything();
 
 		main.close();
-	 
+
 	}
 
 }
