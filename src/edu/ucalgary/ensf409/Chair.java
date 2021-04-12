@@ -29,6 +29,7 @@ public class Chair {
     String category;
     String type;
     int quantity;
+    StringBuilder manufacturers = new StringBuilder();
 
     public String getCategory() {
         return this.category;
@@ -56,6 +57,7 @@ public class Chair {
 
     static ArrayList<String> input = new ArrayList<>();
     static ArrayList<String> partsOrdered = new ArrayList<>();
+    static ArrayList<String> repeats = new ArrayList<>();
 
     // category: String
     // type: String
@@ -86,8 +88,12 @@ public class Chair {
         initializeConnection();
         getEverything(category);
         sortPrice();
-        checkPrice();
-        writeFileChairOrder();
+        int totalPrice = checkPrice();
+        if (totalPrice > 0) {
+            writeFileChairOrder(totalPrice); //Without manafactueres 
+        } else {
+            writeFileSuggestedManu();
+        }
     }
 
     public void getEverything(String category) {
@@ -97,7 +103,7 @@ public class Chair {
             ResultSet rs = stmnt.executeQuery("SELECT * FROM CHAIR WHERE Type = " + "'" + category + "'");
 
             while (rs.next()) {
-                input.add(rs.getString("Price") + "_" + rs.getString("ID") + "_" + rs.getString("ManuID"));
+                input.add(rs.getString("Price") + " " + rs.getString("ID") + " " + rs.getString("ManuID"));
             }
 
             stmnt.close();
@@ -162,36 +168,38 @@ public class Chair {
                 String idString = MAT.group();
                 int priceInt = Integer.parseInt(MAT2.group());
                 try {
-                    Statement stmnt = createConnection.createStatement();
-                    ResultSet rs = stmnt.executeQuery("SELECT * FROM CHAIR WHERE ID = " + "'" + idString + "'");
-                    while (rs.next()) {
-                        if (rs.getString("Legs").equals("N") && rs.getString("Arms").equals("N")
-                                && rs.getString("Seat").equals("N") && rs.getString("Cushion").equals("N")) {
+                    Statement stmnt2 = createConnection.createStatement();
+                    ResultSet rs2 = stmnt2.executeQuery("SELECT * FROM CHAIR WHERE ID = " + "'" + idString + "'");
+
+                        while(rs2.next()) {
+
+                        if (rs2.getString("Legs").equals("N") && rs2.getString("Arms").equals("N")
+                                && rs2.getString("Seat").equals("N") && rs2.getString("Cushion").equals("N")) {
                             empty = true;
                             break;
                         }
-                        if (rs.getString("Legs").equals("Y")) {
+                        if (rs2.getString("Legs").equals("Y")) {
                             numOfLegs++;
                             if (numOfLegs > maxParts) {
                                 numOfLegs--;
                                 trigger += 1;
                             }
                         }
-                        if (rs.getString("Arms").equals("Y")) {
+                        if (rs2.getString("Arms").equals("Y")) {
                             numOfArms++;
                             if (numOfArms > maxParts) {
                                 numOfArms--;
                                 trigger += 1;
                             }
                         }
-                        if (rs.getString("Seat").equals("Y")) {
+                        if (rs2.getString("Seat").equals("Y")) {
                             numOfSeats++;
                             if (numOfSeats > maxParts) {
                                 numOfSeats--;
                                 trigger += 1;
                             }
                         }
-                        if (rs.getString("Cushion").equals("Y")) {
+                        if (rs2.getString("Cushion").equals("Y")) {
                             numOfCushions++;
                             if (numOfCushions > maxParts) {
                                 numOfCushions--;
@@ -213,14 +221,14 @@ public class Chair {
                             removeParts(idString);
                         }
                     }
-                    stmnt.close();
+                    stmnt2.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
             }
         }
 
-        if (numOfLegs != maxParts && numOfArms != maxParts && numOfSeats != maxParts && numOfCushions != maxParts) {
+        if (numOfLegs != maxParts || numOfArms != maxParts || numOfSeats != maxParts || numOfCushions != maxParts) {
             suggestedManufacturer();
         }
         return priceSum;
@@ -228,14 +236,12 @@ public class Chair {
 
     public void suggestedManufacturer() {
 
-        StringBuilder manufacturers = new StringBuilder();
-
         try {
             for (int i = 0; i < input.size(); i++) {
                 final String REGEX3 = "([0-9]+$)";
                 final Pattern PATTERN3 = Pattern.compile(REGEX3);
                 final Matcher MAT3 = PATTERN3.matcher(input.get(i));
-                ArrayList<String> repeats = new ArrayList<>();
+                boolean isRepeat = false;
 
                 if (MAT3.find()) {
                     String manuID = MAT3.group();
@@ -243,14 +249,22 @@ public class Chair {
                     Statement stmnt = createConnection.createStatement();
                     rs = stmnt.executeQuery("SELECT * FROM MANUFACTURER");
 
-                    while (rs.next()) {
-                        if (i > 0) {
-                            if (repeats.get(i - 1).equals(manuID)) {
+                    if (i > 0) {
+                        for (int j = 0; j < repeats.size(); j++) {
+                            if (manuID.equals(repeats.get(j))) {
+                                isRepeat = true;
                                 break;
                             }
                         }
-                        if (rs.getString("manuID").equals(manuID)) {
-                            manufacturers.append(rs.getString("Name"));
+                    }
+                    if (isRepeat) {
+                        continue;
+                    }
+
+                    while (rs.next()) {
+
+                        if (rs.getString("ManuID").equals(manuID)) {
+                            manufacturers.append("Name: " + rs.getString("Name") + "\n");
                             repeats.add(manuID);
                         }
                     }
@@ -267,7 +281,7 @@ public class Chair {
         Statement stmnt;
         try {
             stmnt = createConnection.createStatement();
-            stmnt.executeUpdate("DELETE FROM CHAIR WHERE ID = " + idString);
+            stmnt.executeUpdate("DELETE FROM CHAIR WHERE ID = "+ "'" + idString + "'");
             stmnt.close();
         }
 
@@ -277,7 +291,7 @@ public class Chair {
         }
     }
 
-    public void writeFileChairOrder() throws IOException {
+    public void writeFileChairOrder(int totalPrice) throws IOException {
         try {
             FileWriter fw = new FileWriter("output.txt");
             BufferedWriter bw = new BufferedWriter(fw);
@@ -291,14 +305,28 @@ public class Chair {
             bw.write('\n');
             bw.write("Original Request: " + getType() + " " + getCategory() + ", " + getQuantity());
             bw.write('\n');
-            bw.write("Items Ordered");
+            bw.write("Items Ordered" + "\n");
             for (int i = 0; i < partsOrdered.size(); i++) {
                 bw.write("ID: " + partsOrdered.get(i) + "\n");
             }
-            bw.write("Total Price: " + "$" + checkPrice());
+            bw.write("Total Price: " + "$" + totalPrice);
             // Close the BufferedWriter Object and FileWriter object
-            fw.close();
             bw.close();
+            fw.close();
+        } catch (Exception e) {
+            System.out.println("Failed to write to the output file");
+        }
+    }
+    
+    public void writeFileSuggestedManu() throws IOException {
+        try {
+            FileWriter fw = new FileWriter("output.txt");
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write("Suggested Manafactuers:");
+            bw.write(manufacturers.toString());
+            // Close the BufferedWriter Object and FileWriter object
+            bw.close();
+            fw.close();
         } catch (Exception e) {
             System.out.println("Failed to write to the output file");
         }

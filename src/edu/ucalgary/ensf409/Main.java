@@ -132,9 +132,8 @@ public class Main {
 
 	public void close() {
 		try {
-			createConnection.close();
 			rs.close();
-
+			createConnection.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
