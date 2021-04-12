@@ -159,7 +159,7 @@ public class Main {
 		this.PASSWORD = sc.nextLine();
 
 		System.out.println(
-				"The URL for the connection is this following: jdbc:mysql://localhost/inventory" + USERNAME + PASSWORD);
+				"The URL for the connection is this following: jdbc:mysql://localhost/inventory" + "/" + USERNAME + "/" + PASSWORD);
 		this.DBURL = "jdbc:mysql://localhost/inventory";
 		System.out.println("Enter your order request like the following: (mesh chair, 2):  ");
 		this.furnitureInput = sc.nextLine();

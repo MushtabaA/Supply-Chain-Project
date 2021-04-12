@@ -16,15 +16,44 @@ public class Chair {
     /**
      * Database url of the following format jdbc:subprotocol:subname
      */
-    public String DBURL; // store the database url information
+    public String DBURL;
+
+    public String getDBURL() {
+        return this.DBURL;
+    }
+
+    public void setDBURL(String DBURL) {
+        this.DBURL = DBURL;
+    }
+
+    // store the database url information
     /**
      * Database user on whose behalf the connection will be made
      */
-    public String USERNAME; // store the user's account username
+    public String USERNAME;
+
+    public String getUSERNAME() {
+        return this.USERNAME;
+    }
+
+    public void setUSERNAME(String USERNAME) {
+        this.USERNAME = USERNAME;
+    }
+
+    // store the user's account username
     /**
      * User's password
      */
-    public String PASSWORD; // store the user's account password
+    public String PASSWORD;
+
+    public String getPASSWORD() {
+        return this.PASSWORD;
+    }
+
+    public void setPASSWORD(String PASSWORD) {
+        this.PASSWORD = PASSWORD;
+    }
+    // store the user's account password
 
     private String category;
     private String type;
@@ -65,6 +94,10 @@ public class Chair {
     // quantity: Int
 
     ////// METHODS:
+    //Default Chair CTOR:
+    Chair() {
+        //Does nothing
+    }
 
     // Chair CTOR:
     Chair(String category, String type, int quantity, String dburl, String username, String password) {
@@ -88,7 +121,7 @@ public class Chair {
     public void callEverything() throws IOException {
         initializeConnection();
         getEverything(category);
-        sortPrice();
+        sortPrice(input);
         int totalPrice = checkPrice();
         if (orderStatus) {
             writeFileChairOrder(totalPrice); //Without manafactueres 
@@ -113,7 +146,7 @@ public class Chair {
         }
     }
 
-    public void sortPrice() {
+    public void sortPrice(ArrayList<String> input) {
         for (int i = input.size(); i > 0; i--) {
             for (int j = 0; j < input.size() - 1; j++) {
                 String REGEX = "[0-9]+";
