@@ -26,10 +26,11 @@ public class Chair {
      */
     public String PASSWORD; // store the user's account password
 
-    String category;
-    String type;
-    int quantity;
-    StringBuilder manufacturers = new StringBuilder();
+    private String category;
+    private String type;
+    private int quantity;
+    private StringBuilder manufacturers = new StringBuilder();
+    private boolean orderStatus = true;
 
     public String getCategory() {
         return this.category;
@@ -89,7 +90,7 @@ public class Chair {
         getEverything(category);
         sortPrice();
         int totalPrice = checkPrice();
-        if (totalPrice > 0) {
+        if (orderStatus) {
             writeFileChairOrder(totalPrice); //Without manafactueres 
         } else {
             writeFileSuggestedManu();
@@ -229,6 +230,7 @@ public class Chair {
         }
 
         if (numOfLegs != maxParts || numOfArms != maxParts || numOfSeats != maxParts || numOfCushions != maxParts) {
+            orderStatus = false;
             suggestedManufacturer();
         }
         return priceSum;
@@ -322,7 +324,10 @@ public class Chair {
         try {
             FileWriter fw = new FileWriter("output.txt");
             BufferedWriter bw = new BufferedWriter(fw);
+            bw.write("Order cannot be fulfilled based on current inventory.");
+            bw.write('\n');
             bw.write("Suggested Manafactuers:");
+            bw.write('\n');
             bw.write(manufacturers.toString());
             // Close the BufferedWriter Object and FileWriter object
             bw.close();
