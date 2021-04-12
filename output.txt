@@ -2,7 +2,7 @@ Furniture Order Form
 Faculty Name: 
 Contact: 
 Date: 
-Original Request: chair mesh, 2
+Original Request: chair mesh, 3
 Items Ordered
 ID: C9890
 ID: C6748

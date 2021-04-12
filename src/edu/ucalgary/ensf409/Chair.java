@@ -237,12 +237,13 @@ public class Chair {
     public void suggestedManufacturer() {
 
         try {
+            System.out.println("Order cannot be fulfilled based on current inventory.");
+            System.out.println("Suggested Manufacturers are: ");
             for (int i = 0; i < input.size(); i++) {
                 final String REGEX3 = "([0-9]+$)";
                 final Pattern PATTERN3 = Pattern.compile(REGEX3);
                 final Matcher MAT3 = PATTERN3.matcher(input.get(i));
                 boolean isRepeat = false;
-
                 if (MAT3.find()) {
                     String manuID = MAT3.group();
 
@@ -262,7 +263,6 @@ public class Chair {
                     }
 
                     while (rs.next()) {
-
                         if (rs.getString("ManuID").equals(manuID)) {
                             manufacturers.append("Name: " + rs.getString("Name") + "\n");
                             repeats.add(manuID);
