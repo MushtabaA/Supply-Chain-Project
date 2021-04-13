@@ -155,13 +155,7 @@ public class Main {
 	public void userMenu() throws Exception {
 
 		System.out.println("          WELCOME TO:        ");
-	
-		System.out.println("╦┌┐┌┬  ┬┌─┐┌┐┌┌┬┐┌─┐┬─┐┬ ┬   ");
-		System.out.println("║│││└┐┌┘├┤ │││ │ │ │├┬┘└┬┘   ");
-		System.out.println("╩┘└┘ └┘ └─┘┘└┘ ┴ └─┘┴└─ ┴    ");
-		System.out.println("        ╔╦╗┌─┐┌┐┌┌─┐┌─┐┌─┐┬─┐");
-		System.out.println("        ║║║├─┤│││├─┤│ ┬├┤ ├┬┘");
-		System.out.println("        ╩ ╩┴ ┴┘└┘┴ ┴└─┘└─┘┴└─");
+
 
 		System.out.println("CREATED BY: Mushtaba Al Yasseen, Abhay Khosla, and Parbir Lehal" + "\n");
 		sc = new Scanner(System.in);
