@@ -8,24 +8,25 @@ import java.sql.*;
 import java.io.*;
 
 public class Lamp {
-           
+
     /////// DATA MEMBERS:
     public Connection createConnection;
 
     public ResultSet rs;
 
+    public String originalRequest = getCategory() + " " + getType() + ", " + getQuantity();
     /**
      * Database url of the following format jdbc:subprotocol:subname
      */
     public String DBURL;
 
-        // store the database url information
+    // store the database url information
     /**
      * Database user on whose behalf the connection will be made
      */
     public String USERNAME;
 
-        // store the user's account username
+    // store the user's account username
     /**
      * User's password
      */
@@ -36,6 +37,7 @@ public class Lamp {
     private int quantity;
     private StringBuilder manufacturers = new StringBuilder();
     private boolean boughtParts = true;
+    private boolean fileStatus = false;
     static ArrayList<String> input = new ArrayList<>();
     static ArrayList<String> partsOrdered = new ArrayList<>();
     static ArrayList<String> repeats = new ArrayList<>();
@@ -65,7 +67,7 @@ public class Lamp {
         this.PASSWORD = PASSWORD;
     }
     // store the user's account password
-           
+
     public String getCategory() {
         return this.category;
     }
@@ -99,9 +101,9 @@ public class Lamp {
     }
 
     ////// METHODS:
-    //Default Lamp CTOR:
+    // Default Lamp CTOR:
     Lamp() {
-        //Does nothing
+        // Does nothing
     }
 
     // Lamp CTOR:
@@ -131,7 +133,7 @@ public class Lamp {
         if (boughtParts) {
             removeParts();
             System.out.println("Look at the output.txt file for the full furniture order.");
-            writeFileLampOrder(totalPrice); //Without manufacturers
+            writeFileLampOrder(originalRequest, totalPrice); // Without manufacturers
         } else {
             writeFileSuggestedManu();
         }
@@ -183,10 +185,10 @@ public class Lamp {
     ///////// New Method for checkPrice:
 
     public int lowestPrice() {
-        return checkPriceAll();
+        return checkPriceAll(input);
     }
 
-    public int checkPriceAll() {
+    public int checkPriceAll(ArrayList<String> input) {
         int priceSum = 0;
         int maxParts = numberOfParts(quantity);
         int numOfBases = 0;
@@ -214,7 +216,7 @@ public class Lamp {
                     Statement stmnt2 = createConnection.createStatement();
                     ResultSet rs2 = stmnt2.executeQuery("SELECT * FROM LAMP WHERE ID = " + "'" + idString + "'");
 
-                        while(rs2.next()) {
+                    while (rs2.next()) {
 
                         if (rs2.getString("Base").equals("N") && rs2.getString("Bulb").equals("N")) {
                             empty = true;
@@ -311,7 +313,7 @@ public class Lamp {
         try {
             for (int i = 0; i < partsOrdered.size(); i++) {
                 stmnt = createConnection.createStatement();
-                stmnt.executeUpdate("DELETE FROM LAMP WHERE ID = "+ "'" + partsOrdered.get(i) + "'");
+                stmnt.executeUpdate("DELETE FROM LAMP WHERE ID = " + "'" + partsOrdered.get(i) + "'");
                 stmnt.close();
             }
         }
@@ -322,7 +324,7 @@ public class Lamp {
         }
     }
 
-    public void writeFileLampOrder(int totalPrice) throws IOException {
+    public boolean writeFileLampOrder(String originalRequest, int totalPrice) throws IOException {
         try {
             FileWriter fw = new FileWriter("output.txt");
             BufferedWriter bw = new BufferedWriter(fw);
@@ -334,7 +336,7 @@ public class Lamp {
             bw.write('\n');
             bw.write("Date: ");
             bw.write('\n');
-            bw.write("Original Request: " + getCategory() + " " + getType() + ", " + getQuantity());
+            bw.write("Original Request: " + originalRequest);
             bw.write('\n');
             bw.write("Items Ordered" + "\n");
             for (int i = 0; i < partsOrdered.size(); i++) {
@@ -347,9 +349,10 @@ public class Lamp {
         } catch (Exception e) {
             System.out.println("Failed to write to the output file");
         }
+        return fileStatus = true;
     }
-    
-    public void writeFileSuggestedManu() throws IOException {
+
+    public boolean writeFileSuggestedManu() throws IOException {
         try {
             FileWriter fw = new FileWriter("output.txt");
             BufferedWriter bw = new BufferedWriter(fw);
@@ -364,6 +367,7 @@ public class Lamp {
         } catch (Exception e) {
             System.out.println("Failed to write to the output file");
         }
+        return fileStatus = true;
     }
 
 }

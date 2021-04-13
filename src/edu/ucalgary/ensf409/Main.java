@@ -7,7 +7,11 @@ import java.sql.*;
 import java.util.Scanner;
 
 public class Main {
-
+	//Default Constructor 
+	public Main() {
+		//Does nothing x
+	}
+	
 	static Chair chair;
 	static Desk desk;
 	static Lamp lamp;
@@ -149,7 +153,7 @@ public class Main {
 	// "mesh chair, 2", and set furniture input (using the setter)
 	// Call the splitOrder function
 	public void userMenu() throws Exception {
-		
+
 		System.out.println("          WELCOME TO:        ");
 	
 		System.out.println("╦┌┐┌┬  ┬┌─┐┌┐┌┌┬┐┌─┐┬─┐┬ ┬   ");

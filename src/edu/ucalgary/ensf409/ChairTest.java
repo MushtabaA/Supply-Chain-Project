@@ -22,7 +22,7 @@ public class ChairTest {
     @Test
     //Passes this test as well
     public void initializeConnectionTest() {
-        Chair testChair1 = new Chair("mesh", "chair", 1, "jdbc:mysql://localhost/inventory", "abhay", "ensf409");
+        Chair testChair1 = new Chair("kneeling", "chair", 1, "jdbc:mysql://localhost/inventory", "abhay", "ensf409");
         testChair1.initializeConnection();
         ResultSet rs;
         String[] resultsTest = new String[2];
@@ -217,5 +217,60 @@ public class ChairTest {
         expected.add("003");
         expected.add("005");
         assertEquals("The manufactueres are different", expected, repeats);
+    }
+
+    @Test
+    //Passes this test as well
+    public void removePartsTest() {
+        Chair testChair8 = new Chair("mesh", "chair", 2, "jdbc:mysql://localhost/inventory", "abhay", "ensf409");
+        testChair8.initializeConnection();
+        ResultSet rs;
+        ArrayList<String> inputTest5 = new ArrayList<>();
+        Statement stmnt;
+        ArrayList<String> partsOrdered = new ArrayList<>();
+
+        try {
+            stmnt = testChair8.createConnection.createStatement();
+            rs = stmnt.executeQuery("SELECT * FROM CHAIR WHERE Type = " + "'" + testChair8.getCategory() + "'");
+            int i = 0;
+            while (rs.next()) {
+                inputTest5.add(i, (rs.getString("Price") + " " + rs.getString("ID") + " " + rs.getString("ManuID")));
+                i++;
+            }
+            testChair8.sortPrice(inputTest5);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            for (int i = 0; i < inputTest5.size(); i++) {
+                stmnt = testChair8.createConnection.createStatement();
+                stmnt.executeUpdate("DELETE FROM CHAIR WHERE ID = "+ "'" + inputTest5.get(i) + "'");
+                stmnt.close();
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        ArrayList<String> expected = new ArrayList<>();
+        assertEquals("The deletion was not sucessful", expected, partsOrdered);
+    }
+
+    @Test
+    //Passes this test as well
+    public void writeFileChairOrderTest() throws IOException {
+        String orginialOrderRequest = "mesh chair, 1";
+        int priceTotal = 200;
+        Chair testChair9 = new Chair("mesh", "chair", 1, "jdbc:mysql://localhost/inventory", "abhay", "ensf409");
+        boolean result = testChair9.writeFileChairOrder(orginialOrderRequest,priceTotal);
+        boolean expected = true;
+        assertEquals("File to create file: ", expected, result);
+    }
+    @Test
+    //Passes this test as well
+    public void writeFileSuggestedManuTest() throws IOException {
+        Chair testChair10 = new Chair("mesh", "chair", 2, "jdbc:mysql://localhost/inventory", "abhay", "ensf409");
+        boolean result = testChair10.writeFileSuggestedManu();
+        boolean expected = true;
+        assertEquals("File to create file: ", expected, result);
     }
 }

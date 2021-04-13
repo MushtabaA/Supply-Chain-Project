@@ -1,10 +1,2 @@
-Furniture Order Form
-Faculty Name: 
-Contact: 
-Date: 
-Original Request: standing desk, 1
-Items Ordered
-ID: D2341
-ID: D3820
-ID: D4438
-Total Price: $400
+Order cannot be fulfilled based on current inventory.
+Suggested Manafactuers:

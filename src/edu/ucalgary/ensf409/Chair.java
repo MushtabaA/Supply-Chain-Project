@@ -14,6 +14,8 @@ public class Chair {
 
     public ResultSet rs;
 
+    public String originalRequest = getCategory() + " " + getType() + ", " + getQuantity();
+
     /**
      * Database url of the following format jdbc:subprotocol:subname
      */
@@ -36,6 +38,7 @@ public class Chair {
     private int quantity;
     public StringBuilder manufacturers = new StringBuilder();
     private boolean boughtParts = true;
+    private boolean fileStatus = false;
     static ArrayList<String> input = new ArrayList<>();
     static ArrayList<String> partsOrdered = new ArrayList<>();
     static ArrayList<String> repeats = new ArrayList<>();
@@ -131,7 +134,7 @@ public class Chair {
         if (boughtParts) {
             removeParts();
             System.out.println("Look at the output.txt file for the full furniture order.");
-            writeFileChairOrder(totalPrice); //Without manufacturers
+            writeFileChairOrder(originalRequest, totalPrice); //Without manufacturers
         } else {
             writeFileSuggestedManu();
         }
@@ -424,7 +427,7 @@ public class Chair {
         }
     }
 
-    public void writeFileChairOrder(int totalPrice) throws IOException {
+    public boolean writeFileChairOrder(String originalRequest, int totalPrice) throws IOException {
         try {
             FileWriter fw = new FileWriter("output.txt");
             BufferedWriter bw = new BufferedWriter(fw);
@@ -436,7 +439,7 @@ public class Chair {
             bw.write('\n');
             bw.write("Date: ");
             bw.write('\n');
-            bw.write("Original Request: " + getCategory() + " " + getType() + ", " + getQuantity());
+            bw.write("Original Request: " + originalRequest);
             bw.write('\n');
             bw.write("Items Ordered" + "\n");
             for (int i = 0; i < partsOrdered.size(); i++) {
@@ -449,9 +452,10 @@ public class Chair {
         } catch (Exception e) {
             System.out.println("Failed to write to the output file");
         }
+        return fileStatus = true;
     }
     
-    public void writeFileSuggestedManu() throws IOException {
+    public boolean writeFileSuggestedManu() throws IOException {
         try {
             FileWriter fw = new FileWriter("output.txt");
             BufferedWriter bw = new BufferedWriter(fw);
@@ -466,5 +470,6 @@ public class Chair {
         } catch (Exception e) {
             System.out.println("Failed to write to the output file");
         }
+        return fileStatus = true;
     }
 }
