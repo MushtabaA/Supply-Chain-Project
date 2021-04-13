@@ -6,6 +6,8 @@ import org.junit.*;
 import java.io.*;
 import java.util.*;
 import java.sql.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ChairTest {
     @Test
@@ -107,7 +109,113 @@ public class ChairTest {
     }
 
     @Test
-    public void checkPriceTest() {
+    //Passes this test as well
+    public void checkPriceKneelingTest() {
+        Chair testChair5 = new Chair("kneeling", "chair", 1, "jdbc:mysql://localhost/inventory", "abhay", "ensf409");
+        testChair5.initializeConnection();
+        ResultSet rs;
+        ArrayList<String> inputTest2 = new ArrayList<>();
+        Statement stmnt;
+        try {
+            stmnt = testChair5.createConnection.createStatement();
+            rs = stmnt.executeQuery("SELECT * FROM CHAIR WHERE Type = " + "'" + testChair5.getCategory() + "'");
+            int i = 0;
+            while (rs.next()) {
+                inputTest2.add(i, (rs.getString("Price") + " " + rs.getString("ID") + " " + rs.getString("ManuID")));
+                i++;
+            }
+            testChair5.sortPrice(inputTest2);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        int test = testChair5.checkPriceKneeling(inputTest2);
+        int expected = 125;
+        assertEquals("The lowest price was not determined", expected, test);
+    }
+    @Test
+    //Passes this test as well
+    public void checkPriceAllTest() {
+        Chair testChair6 = new Chair("mesh", "chair", 1, "jdbc:mysql://localhost/inventory", "abhay", "ensf409");
+        testChair6.initializeConnection();
+        ResultSet rs;
+        ArrayList<String> inputTest3 = new ArrayList<>();
+        Statement stmnt;
+        try {
+            stmnt = testChair6.createConnection.createStatement();
+            rs = stmnt.executeQuery("SELECT * FROM CHAIR WHERE Type = " + "'" + testChair6.getCategory() + "'");
+            int i = 0;
+            while (rs.next()) {
+                inputTest3.add(i, (rs.getString("Price") + " " + rs.getString("ID") + " " + rs.getString("ManuID")));
+                i++;
+            }
+            testChair6.sortPrice(inputTest3);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        int test = testChair6.checkPriceAll(inputTest3);
+        int expected = 200;
+        assertEquals("The lowest price was not determined", expected, test);
+    }
 
+    @Test
+    //Passes this test
+    public void suggestedManufacturerTest() {
+        Chair testChair7 = new Chair("mesh", "chair", 2, "jdbc:mysql://localhost/inventory", "abhay", "ensf409");
+        testChair7.initializeConnection();
+        ResultSet rs;
+        ArrayList<String> inputTest4 = new ArrayList<>();
+        Statement stmnt;
+        ArrayList<String> repeats = new ArrayList<>();
+
+        try {
+            stmnt = testChair7.createConnection.createStatement();
+            rs = stmnt.executeQuery("SELECT * FROM CHAIR WHERE Type = " + "'" + testChair7.getCategory() + "'");
+            int i = 0;
+            while (rs.next()) {
+                inputTest4.add(i, (rs.getString("Price") + " " + rs.getString("ID") + " " + rs.getString("ManuID")));
+                i++;
+            }
+            testChair7.sortPrice(inputTest4);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            for (int i = 0; i < inputTest4.size(); i++) {
+                final String REGEX3 = "([0-9]+$)";
+                final Pattern PATTERN3 = Pattern.compile(REGEX3);
+                final Matcher MAT3 = PATTERN3.matcher(inputTest4.get(i));
+                boolean isRepeat = false;
+                if (MAT3.find()) {
+                    String manuID = MAT3.group();
+
+                    stmnt = testChair7.createConnection.createStatement();
+                    rs = stmnt.executeQuery("SELECT * FROM MANUFACTURER");
+
+                    if (i > 0) {
+                        for (int j = 0; j < repeats.size(); j++) {
+                            if (manuID.equals(repeats.get(j))) {
+                                isRepeat = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (isRepeat) {
+                        continue;
+                    }
+
+                    while (rs.next()) {
+                        if (rs.getString("ManuID").equals(manuID)) {
+                            repeats.add(manuID);
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            // Does nothing
+        }
+        ArrayList<String> expected = new ArrayList<>();
+        expected.add("003");
+        expected.add("005");
+        assertEquals("The manufactueres are different", expected, repeats);
     }
 }

@@ -8,6 +8,7 @@ import java.sql.*;
 import java.io.*;
 
 public class Chair {
+
     /////// DATA MEMBERS:
     public Connection createConnection;
 
@@ -18,6 +19,28 @@ public class Chair {
      */
     public String DBURL;
 
+        // store the database url information
+    /**
+     * Database user on whose behalf the connection will be made
+     */
+    public String USERNAME;
+
+        // store the user's account username
+    /**
+     * User's password
+     */
+    public String PASSWORD;
+
+    private String category;
+    private String type;
+    private int quantity;
+    public StringBuilder manufacturers = new StringBuilder();
+    private boolean boughtParts = true;
+    static ArrayList<String> input = new ArrayList<>();
+    static ArrayList<String> partsOrdered = new ArrayList<>();
+    static ArrayList<String> repeats = new ArrayList<>();
+    int totalPrice;
+
     public String getDBURL() {
         return this.DBURL;
     }
@@ -25,12 +48,6 @@ public class Chair {
     public void setDBURL(String DBURL) {
         this.DBURL = DBURL;
     }
-
-    // store the database url information
-    /**
-     * Database user on whose behalf the connection will be made
-     */
-    public String USERNAME;
 
     public String getUSERNAME() {
         return this.USERNAME;
@@ -40,12 +57,6 @@ public class Chair {
         this.USERNAME = USERNAME;
     }
 
-    // store the user's account username
-    /**
-     * User's password
-     */
-    public String PASSWORD;
-
     public String getPASSWORD() {
         return this.PASSWORD;
     }
@@ -54,13 +65,7 @@ public class Chair {
         this.PASSWORD = PASSWORD;
     }
     // store the user's account password
-
-    private String category;
-    private String type;
-    private int quantity;
-    private StringBuilder manufacturers = new StringBuilder();
-    private boolean orderStatus = true;
-
+           
     public String getCategory() {
         return this.category;
     }
@@ -85,13 +90,13 @@ public class Chair {
         this.quantity = quantity;
     }
 
-    static ArrayList<String> input = new ArrayList<>();
-    static ArrayList<String> partsOrdered = new ArrayList<>();
-    static ArrayList<String> repeats = new ArrayList<>();
+    public int getTotalPrice() {
+        return this.totalPrice;
+    }
 
-    // category: String
-    // type: String
-    // quantity: Int
+    public void setTotalPrice(int totalPrice) {
+        this.totalPrice = totalPrice;
+    }
 
     ////// METHODS:
     //Default Chair CTOR:
@@ -122,9 +127,11 @@ public class Chair {
         initializeConnection();
         getEverything(category);
         sortPrice(input);
-        int totalPrice = checkPrice();
-        if (orderStatus) {
-            writeFileChairOrder(totalPrice); //Without manafactueres 
+        totalPrice = lowestPrice();
+        if (boughtParts) {
+            removeParts();
+            System.out.println("Look at the output.txt file for the full furniture order.");
+            writeFileChairOrder(totalPrice); //Without manufacturers
         } else {
             writeFileSuggestedManu();
         }
@@ -175,7 +182,97 @@ public class Chair {
 
     ///////// New Method for checkPrice:
 
-    public int checkPrice() {
+    public int lowestPrice() {
+        int returnPrice;
+        
+        if (category.equals("kneeling")) {
+            returnPrice = checkPriceKneeling(input);
+        } else {
+            returnPrice = checkPriceAll(input);
+        }
+
+        return returnPrice;
+    }
+
+    public int checkPriceKneeling(ArrayList<String> input) {
+        int priceSum = 0;
+        int maxParts = numberOfParts(quantity);
+        int numOfLegs = 0;
+        int numOfSeats = 0;
+        int trigger = 0;
+        boolean empty = false;
+
+        for (int i = 0; i < input.size(); i++) {
+
+            if (numOfLegs == maxParts && numOfSeats == maxParts) {
+                break;
+            }
+
+            final String REGEX = "([A-Z])\\w+";
+            final String REGEX2 = "[0-9]+";
+            final Pattern PATTERN = Pattern.compile(REGEX);
+            final Pattern PATTERN2 = Pattern.compile(REGEX2);
+            final Matcher MAT = PATTERN.matcher(input.get(i));
+            final Matcher MAT2 = PATTERN2.matcher(input.get(i));
+
+            if (MAT.find() && MAT2.find()) {
+                String idString = MAT.group();
+                int priceInt = Integer.parseInt(MAT2.group());
+                try {
+                    Statement stmnt2 = createConnection.createStatement();
+                    ResultSet rs2 = stmnt2.executeQuery("SELECT * FROM CHAIR WHERE ID = " + "'" + idString + "'");
+
+                        while(rs2.next()) {
+
+                        if (rs2.getString("Legs").equals("N") && rs2.getString("Arms").equals("N")
+                                && rs2.getString("Seat").equals("N") && rs2.getString("Cushion").equals("N")) {
+                            empty = true;
+                            break;
+                        }
+                        if (rs2.getString("Legs").equals("Y")) {
+                            numOfLegs++;
+                            if (numOfLegs > maxParts) {
+                                numOfLegs--;
+                                trigger += 1;
+                            }
+                        }
+                        if (rs2.getString("Seat").equals("Y")) {
+                            numOfSeats++;
+                            if (numOfSeats > maxParts) {
+                                numOfSeats--;
+                                trigger += 1;
+                            }
+                        }
+                    }
+                    if (empty) {
+                        empty = false;
+                        continue;
+                    }
+                    if (trigger == 2) {
+                        trigger = 0;
+                        continue;
+                    } else {
+                        if (numOfLegs > 0 || numOfSeats > 0) {
+                            priceSum += priceInt;
+                            partsOrdered.add(idString);
+                        }
+                    }
+                    stmnt2.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (numOfLegs != maxParts || numOfSeats != maxParts) {
+            boughtParts = false;
+            suggestedManufacturer();
+        }
+        return priceSum;
+    }
+
+
+    public int checkPriceAll(ArrayList<String> input) {
         int priceSum = 0;
         int maxParts = numberOfParts(quantity);
         int numOfLegs = 0;
@@ -252,7 +349,6 @@ public class Chair {
                         if (numOfLegs > 0 || numOfArms > 0 || numOfSeats > 0 || numOfCushions > 0) {
                             priceSum += priceInt;
                             partsOrdered.add(idString);
-                            removeParts(idString);
                         }
                     }
                     stmnt2.close();
@@ -263,7 +359,7 @@ public class Chair {
         }
 
         if (numOfLegs != maxParts || numOfArms != maxParts || numOfSeats != maxParts || numOfCushions != maxParts) {
-            orderStatus = false;
+            boughtParts = false;
             suggestedManufacturer();
         }
         return priceSum;
@@ -273,7 +369,8 @@ public class Chair {
 
         try {
             System.out.println("Order cannot be fulfilled based on current inventory.");
-            System.out.println("Suggested Manufacturers are: ");
+            System.out.print("Suggested Manufacturers can also be viewed in the output.txt file.");
+            System.out.println("The suggested Manufacturers are: ");
             for (int i = 0; i < input.size(); i++) {
                 final String REGEX3 = "([0-9]+$)";
                 final Pattern PATTERN3 = Pattern.compile(REGEX3);
@@ -309,15 +406,16 @@ public class Chair {
             // Does nothing
         }
         System.out.println(manufacturers.toString());
-
     }
 
-    public void removeParts(String idString) {
+    public void removeParts() {
         Statement stmnt;
         try {
-            stmnt = createConnection.createStatement();
-            stmnt.executeUpdate("DELETE FROM CHAIR WHERE ID = "+ "'" + idString + "'");
-            stmnt.close();
+            for (int i = 0; i < partsOrdered.size(); i++) {
+                stmnt = createConnection.createStatement();
+                stmnt.executeUpdate("DELETE FROM CHAIR WHERE ID = "+ "'" + partsOrdered.get(i) + "'");
+                stmnt.close();
+            }
         }
 
         catch (SQLException e) {
@@ -338,7 +436,7 @@ public class Chair {
             bw.write('\n');
             bw.write("Date: ");
             bw.write('\n');
-            bw.write("Original Request: " + getType() + " " + getCategory() + ", " + getQuantity());
+            bw.write("Original Request: " + getCategory() + " " + getType() + ", " + getQuantity());
             bw.write('\n');
             bw.write("Items Ordered" + "\n");
             for (int i = 0; i < partsOrdered.size(); i++) {
