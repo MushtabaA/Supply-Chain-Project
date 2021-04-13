@@ -14,7 +14,6 @@ public class Desk {
 
     public ResultSet rs;
 
-    public String originalRequest = getCategory() + " " + getType() + ", " + getQuantity();
 
     /**
      * Database url of the following format jdbc:subprotocol:subname
@@ -134,6 +133,7 @@ public class Desk {
         if (boughtParts) {
             removeParts();
             System.out.println("Look at the output.txt file for the full furniture order.");
+            String originalRequest = getCategory() + " " + getType() + ", " + getQuantity();
             writeFileDeskOrder(originalRequest, totalPrice); // Without manufacturers
         } else {
             writeFileSuggestedManu();
@@ -196,6 +196,7 @@ public class Desk {
         int numOfTops = 0;
         int numOfDrawers = 0;
         int trigger = 0;
+        int noCounter = 0;
         boolean empty = false;
 
         for (int i = 0; i < input.size(); i++) {
@@ -219,6 +220,7 @@ public class Desk {
                     ResultSet rs2 = stmnt2.executeQuery("SELECT * FROM DESK WHERE ID = " + "'" + idString + "'");
 
                     while (rs2.next()) {
+                    noCounter = 0;
 
                         if (rs2.getString("Legs").equals("N") && rs2.getString("Top").equals("N")
                                 && rs2.getString("Drawer").equals("N")) {
@@ -232,12 +234,18 @@ public class Desk {
                                 trigger += 1;
                             }
                         }
+                        if (rs2.getString("Legs").equals("N")) {
+                            noCounter++;
+                        }
                         if (rs2.getString("Top").equals("Y")) {
                             numOfTops++;
                             if (numOfTops > maxParts) {
                                 numOfTops--;
                                 trigger += 1;
                             }
+                        }
+                        if (rs2.getString("Top").equals("N")) {
+                            noCounter++;
                         }
                         if (rs2.getString("Drawer").equals("Y")) {
                             numOfDrawers++;
@@ -246,12 +254,16 @@ public class Desk {
                                 trigger += 1;
                             }
                         }
+                        if (rs2.getString("Drawer").equals("N")) {
+                            noCounter++;
+                        }
                     }
                     if (empty) {
                         empty = false;
                         continue;
                     }
-                    if (trigger == 3) {
+                    if (trigger == 3 || trigger + noCounter == 3) {
+                        noCounter = 0;
                         trigger = 0;
                         continue;
                     } else {
@@ -368,7 +380,7 @@ public class Desk {
             BufferedWriter bw = new BufferedWriter(fw);
             bw.write("Order cannot be fulfilled based on current inventory.");
             bw.write('\n');
-            bw.write("Suggested Manafactuers:");
+            bw.write("Suggested Manufacturers:");
             bw.write('\n');
             bw.write(manufacturers.toString());
             // Close the BufferedWriter Object and FileWriter object

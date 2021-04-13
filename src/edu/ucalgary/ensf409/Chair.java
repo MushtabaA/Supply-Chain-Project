@@ -14,7 +14,6 @@ public class Chair {
 
     public ResultSet rs;
 
-    public String originalRequest = getCategory() + " " + getType() + ", " + getQuantity();
 
     /**
      * Database url of the following format jdbc:subprotocol:subname
@@ -134,6 +133,7 @@ public class Chair {
         if (boughtParts) {
             removeParts();
             System.out.println("Look at the output.txt file for the full furniture order.");
+            String originalRequest = getCategory() + " " + getType() + ", " + getQuantity();
             writeFileChairOrder(originalRequest, totalPrice); //Without manufacturers
         } else {
             writeFileSuggestedManu();
@@ -203,6 +203,7 @@ public class Chair {
         int numOfLegs = 0;
         int numOfSeats = 0;
         int trigger = 0;
+        int noCounter = 0;
         boolean empty = false;
 
         for (int i = 0; i < input.size(); i++) {
@@ -226,6 +227,7 @@ public class Chair {
                     ResultSet rs2 = stmnt2.executeQuery("SELECT * FROM CHAIR WHERE ID = " + "'" + idString + "'");
 
                         while(rs2.next()) {
+                        noCounter = 0;
 
                         if (rs2.getString("Legs").equals("N") && rs2.getString("Arms").equals("N")
                                 && rs2.getString("Seat").equals("N") && rs2.getString("Cushion").equals("N")) {
@@ -239,6 +241,9 @@ public class Chair {
                                 trigger += 1;
                             }
                         }
+                        if (rs2.getString("Legs").equals("N")) {
+                            noCounter++;
+                        }
                         if (rs2.getString("Seat").equals("Y")) {
                             numOfSeats++;
                             if (numOfSeats > maxParts) {
@@ -246,12 +251,16 @@ public class Chair {
                                 trigger += 1;
                             }
                         }
+                        if (rs2.getString("Seat").equals("N")) {
+                            noCounter++;
+                        }
                     }
                     if (empty) {
                         empty = false;
                         continue;
                     }
-                    if (trigger == 2) {
+                    if (trigger == 2 || trigger + noCounter == 2) {
+                        noCounter = 0;
                         trigger = 0;
                         continue;
                     } else {
@@ -283,6 +292,7 @@ public class Chair {
         int numOfSeats = 0;
         int numOfCushions = 0;
         int trigger = 0;
+        int noCounter = 0;
         boolean empty = false;
 
         for (int i = 0; i < input.size(); i++) {
@@ -306,6 +316,7 @@ public class Chair {
                     ResultSet rs2 = stmnt2.executeQuery("SELECT * FROM CHAIR WHERE ID = " + "'" + idString + "'");
 
                         while(rs2.next()) {
+                        noCounter = 0;
 
                         if (rs2.getString("Legs").equals("N") && rs2.getString("Arms").equals("N")
                                 && rs2.getString("Seat").equals("N") && rs2.getString("Cushion").equals("N")) {
@@ -319,12 +330,18 @@ public class Chair {
                                 trigger += 1;
                             }
                         }
+                        if (rs2.getString("Legs").equals("N")) {
+                            noCounter++;
+                        }
                         if (rs2.getString("Arms").equals("Y")) {
                             numOfArms++;
                             if (numOfArms > maxParts) {
                                 numOfArms--;
                                 trigger += 1;
                             }
+                        }
+                        if (rs2.getString("Arms").equals("N")) {
+                            noCounter++;
                         }
                         if (rs2.getString("Seat").equals("Y")) {
                             numOfSeats++;
@@ -333,6 +350,9 @@ public class Chair {
                                 trigger += 1;
                             }
                         }
+                        if (rs2.getString("Seat").equals("N")) {
+                            noCounter++;
+                        }
                         if (rs2.getString("Cushion").equals("Y")) {
                             numOfCushions++;
                             if (numOfCushions > maxParts) {
@@ -340,12 +360,16 @@ public class Chair {
                                 trigger += 1;
                             }
                         }
+                        if (rs2.getString("Cushion").equals("N")) {
+                            noCounter++;
+                        }
                     }
                     if (empty) {
                         empty = false;
                         continue;
                     }
-                    if (trigger == 4) {
+                    if (trigger == 4 || trigger + noCounter == 4) {
+                        noCounter = 0;
                         trigger = 0;
                         continue;
                     } else {
@@ -422,7 +446,7 @@ public class Chair {
         }
 
         catch (SQLException e) {
-            System.out.println("Deleting the part was unsucessful");
+            System.out.println("Deleting the part was unsuccessful");
             e.printStackTrace();
         }
     }
@@ -461,7 +485,7 @@ public class Chair {
             BufferedWriter bw = new BufferedWriter(fw);
             bw.write("Order cannot be fulfilled based on current inventory.");
             bw.write('\n');
-            bw.write("Suggested Manafactuers:");
+            bw.write("Suggested Manufacturers:");
             bw.write('\n');
             bw.write(manufacturers.toString());
             // Close the BufferedWriter Object and FileWriter object

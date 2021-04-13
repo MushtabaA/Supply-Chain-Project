@@ -163,7 +163,7 @@ public class Main {
 		System.out.println("        ║║║├─┤│││├─┤│ ┬├┤ ├┬┘");
 		System.out.println("        ╩ ╩┴ ┴┘└┘┴ ┴└─┘└─┘┴└─");
 
-		System.out.println("CREATED BY: Mushtaba Al Yasseen, Abhay Khosla, and Parbir Lehal");
+		System.out.println("CREATED BY: Mushtaba Al Yasseen, Abhay Khosla, and Parbir Lehal" + "\n");
 		sc = new Scanner(System.in);
 		System.out.println("Enter Username for the Database access: ");
 		this.USERNAME = sc.nextLine();

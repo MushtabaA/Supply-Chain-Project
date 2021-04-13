@@ -1,2 +1,9 @@
-Order cannot be fulfilled based on current inventory.
-Suggested Manafactuers:
+Furniture Order Form
+Faculty Name: 
+Contact: 
+Date: 
+Original Request: small filing, 1
+Items Ordered
+ID: F001
+ID: F013
+Total Price: $100

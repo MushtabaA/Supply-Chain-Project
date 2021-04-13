@@ -14,7 +14,6 @@ public class Lamp {
 
     public ResultSet rs;
 
-    public String originalRequest = getCategory() + " " + getType() + ", " + getQuantity();
     /**
      * Database url of the following format jdbc:subprotocol:subname
      */
@@ -133,6 +132,7 @@ public class Lamp {
         if (boughtParts) {
             removeParts();
             System.out.println("Look at the output.txt file for the full furniture order.");
+            String originalRequest = getCategory() + " " + getType() + ", " + getQuantity();
             writeFileLampOrder(originalRequest, totalPrice); // Without manufacturers
         } else {
             writeFileSuggestedManu();
@@ -194,6 +194,7 @@ public class Lamp {
         int numOfBases = 0;
         int numOfBulbs = 0;
         int trigger = 0;
+        int noCounter = 0;
         boolean empty = false;
 
         for (int i = 0; i < input.size(); i++) {
@@ -217,6 +218,7 @@ public class Lamp {
                     ResultSet rs2 = stmnt2.executeQuery("SELECT * FROM LAMP WHERE ID = " + "'" + idString + "'");
 
                     while (rs2.next()) {
+                    noCounter = 0;
 
                         if (rs2.getString("Base").equals("N") && rs2.getString("Bulb").equals("N")) {
                             empty = true;
@@ -229,6 +231,9 @@ public class Lamp {
                                 trigger += 1;
                             }
                         }
+                        if (rs2.getString("Base").equals("N")) {
+                            noCounter++;
+                        }
                         if (rs2.getString("Bulb").equals("Y")) {
                             numOfBulbs++;
                             if (numOfBulbs > maxParts) {
@@ -236,12 +241,16 @@ public class Lamp {
                                 trigger += 1;
                             }
                         }
+                        if (rs2.getString("Bulb").equals("N")) {
+                            noCounter++;
+                        }
                     }
                     if (empty) {
                         empty = false;
                         continue;
                     }
-                    if (trigger == 2) {
+                    if (trigger == 2 || trigger + noCounter == 2) {
+                        noCounter = 0;
                         trigger = 0;
                         continue;
                     } else {
@@ -358,7 +367,7 @@ public class Lamp {
             BufferedWriter bw = new BufferedWriter(fw);
             bw.write("Order cannot be fulfilled based on current inventory.");
             bw.write('\n');
-            bw.write("Suggested Manafactuers:");
+            bw.write("Suggested Manufacturers:");
             bw.write('\n');
             bw.write(manufacturers.toString());
             // Close the BufferedWriter Object and FileWriter object
