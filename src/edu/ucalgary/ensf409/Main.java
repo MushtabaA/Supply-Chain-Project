@@ -7,11 +7,11 @@ import java.sql.*;
 import java.util.Scanner;
 
 public class Main {
-	//Default Constructor 
+	// Default Constructor
 	public Main() {
-		//Does nothing x
+		// Does nothing
 	}
-	
+
 	static Chair chair;
 	static Desk desk;
 	static Lamp lamp;
@@ -156,8 +156,7 @@ public class Main {
 
 		System.out.println("          WELCOME TO:        ");
 
-
-		System.out.println("CREATED BY: Mushtaba Al Yasseen, Abhay Khosla, and Parbir Lehal" + "\n");
+		System.out.println("CREATED BY: Mushtaba Al Yasseen, Abhay Khosla, and Parbir Lehal");
 		sc = new Scanner(System.in);
 		System.out.println("Enter Username for the Database access: ");
 		this.USERNAME = sc.nextLine();
@@ -165,8 +164,8 @@ public class Main {
 		System.out.println("Enter Password for the Database access: ");
 		this.PASSWORD = sc.nextLine();
 
-		System.out.println(
-				"The URL for the connection is this following: jdbc:mysql://localhost/inventory" + "/" + USERNAME + "/" + PASSWORD);
+		System.out.println("The URL for the connection is this following: jdbc:mysql://localhost/inventory" + "/"
+				+ USERNAME + "/" + PASSWORD);
 		this.DBURL = "jdbc:mysql://localhost/inventory";
 		System.out.println("Enter your order request like the following example: mesh chair, 1");
 		this.furnitureInput = sc.nextLine();
@@ -210,8 +209,8 @@ public class Main {
 		if (MAT2.find()) {
 			furnitureType = MAT2.group();
 		} else {
-			throw new Exception("The given furniture type was invalid, valid furniture types include:" 
-			+ "chair, desk, lamp, and filing");
+			throw new Exception("The given furniture type was invalid, valid furniture types include:"
+					+ "chair, desk, lamp, and filing");
 		}
 
 		if (MAT3.find()) {
@@ -228,51 +227,51 @@ public class Main {
 		main.userMenu();
 		main.initializeConnection();
 		if (main.getFurnitureType().equals("chair") || main.getFurnitureType().equals("desk")
-		|| main.getFurnitureType().equals("lamp") || main.getFurnitureType().equals("filing")) {
+				|| main.getFurnitureType().equals("lamp") || main.getFurnitureType().equals("filing")) {
 		} else {
-			throw new Exception("The given furniture type was invalid, valid furniture types include:" 
-			+ "chair, desk, lamp, and filing");
+			throw new Exception("The given furniture type was invalid, valid furniture types include:"
+					+ "chair, desk, lamp, and filing");
 		}
 
-		if (main.getFurnitureCategory().equals("kneeling") || main.getFurnitureCategory().equals("task") 
-		|| main.getFurnitureCategory().equals("mesh") || main.getFurnitureCategory().equals("executive") 
-		|| main.getFurnitureCategory().equals("ergonomic") || main.getFurnitureCategory().equals("standing") 
-		|| main.getFurnitureCategory().equals("adjustable") || main.getFurnitureCategory().equals("traditional") 
-		|| main.getFurnitureCategory().equals("desk") || main.getFurnitureCategory().equals("study") 
-		|| main.getFurnitureCategory().equals("swing arm") || main.getFurnitureCategory().equals("small") 
-		|| main.getFurnitureCategory().equals("medium") || main.getFurnitureCategory().equals("large")) {
+		if (main.getFurnitureCategory().equals("kneeling") || main.getFurnitureCategory().equals("task")
+				|| main.getFurnitureCategory().equals("mesh") || main.getFurnitureCategory().equals("executive")
+				|| main.getFurnitureCategory().equals("ergonomic") || main.getFurnitureCategory().equals("standing")
+				|| main.getFurnitureCategory().equals("adjustable") || main.getFurnitureCategory().equals("traditional")
+				|| main.getFurnitureCategory().equals("desk") || main.getFurnitureCategory().equals("study")
+				|| main.getFurnitureCategory().equals("swing arm") || main.getFurnitureCategory().equals("small")
+				|| main.getFurnitureCategory().equals("medium") || main.getFurnitureCategory().equals("large")) {
 		} else {
 			throw new Exception("The given furniture category was invalid");
 		}
 
 		if (main.getFurnitureQuantity() <= 0) {
-			throw new Exception("The given furniture quantity was invalid, must enter a positive number greater than 0.");
+			throw new Exception(
+					"The given furniture quantity was invalid, must enter a positive number greater than 0.");
 		}
-		
 
 		if (main.getFurnitureType().equals("chair")) {
-		chair = new Chair(main.getFurnitureCategory(), main.getFurnitureType(),
-		main.getFurnitureQuantity(), main.DBURL, main.USERNAME, main.PASSWORD);
-		
-		chair.callEverything();
-		
-		} else if (main.getFurnitureType().equals("desk")) {
-		desk = new Desk(main.getFurnitureCategory(), main.getFurnitureType(),
-		main.getFurnitureQuantity(), main.DBURL, main.USERNAME, main.PASSWORD);
+			chair = new Chair(main.getFurnitureCategory(), main.getFurnitureType(), main.getFurnitureQuantity(),
+					main.DBURL, main.USERNAME, main.PASSWORD);
 
-		desk.callEverything();
+			chair.callEverything();
+
+		} else if (main.getFurnitureType().equals("desk")) {
+			desk = new Desk(main.getFurnitureCategory(), main.getFurnitureType(), main.getFurnitureQuantity(),
+					main.DBURL, main.USERNAME, main.PASSWORD);
+
+			desk.callEverything();
 
 		} else if (main.getFurnitureType().equals("lamp")) {
-		lamp = new Lamp(main.getFurnitureCategory(), main.getFurnitureType(),
-		main.getFurnitureQuantity(), main.DBURL, main.USERNAME, main.PASSWORD);
+			lamp = new Lamp(main.getFurnitureCategory(), main.getFurnitureType(), main.getFurnitureQuantity(),
+					main.DBURL, main.USERNAME, main.PASSWORD);
 
-		lamp.callEverything();
+			lamp.callEverything();
 
 		} else if (main.getFurnitureType().equals("filing")) {
-		filing = new Filing(main.getFurnitureCategory(), main.getFurnitureType(),
-		main.getFurnitureQuantity(), main.DBURL, main.USERNAME, main.PASSWORD);
+			filing = new Filing(main.getFurnitureCategory(), main.getFurnitureType(), main.getFurnitureQuantity(),
+					main.DBURL, main.USERNAME, main.PASSWORD);
 
-		filing.callEverything();
+			filing.callEverything();
 
 		}
 
