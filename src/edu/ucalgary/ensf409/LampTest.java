@@ -8,7 +8,7 @@ import java.util.*;
 import java.sql.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+//TODO: FIX THE DEFAULT USER TO SCM
 public class LampTest {
     @Test
     // Passes this test
