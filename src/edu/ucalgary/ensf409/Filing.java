@@ -434,7 +434,7 @@ public class Filing {
 
     public boolean writeFileFilingOrder(String originalRequest, int totalPrice) throws IOException {
         try {
-            FileWriter fw = new FileWriter("output.txt");
+            FileWriter fw = new FileWriter("orderform.txt");
             BufferedWriter bw = new BufferedWriter(fw);
             bw.write("Furniture Order Form");
             bw.write('\n');
@@ -462,7 +462,7 @@ public class Filing {
 
     public boolean writeFileSuggestedManu() throws IOException {
         try {
-            FileWriter fw = new FileWriter("output.txt");
+            FileWriter fw = new FileWriter("orderform.txt");
             BufferedWriter bw = new BufferedWriter(fw);
             bw.write("Order cannot be fulfilled based on current inventory.");
             bw.write('\n');
