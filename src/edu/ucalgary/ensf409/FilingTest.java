@@ -134,7 +134,7 @@ public class FilingTest {
             e.printStackTrace();
         }
         int test = testFiling6.checkPriceAll(inputTest3);
-        int expected = 150;
+        int expected = 100;
         assertEquals("The lowest price was not determined", expected, test);
     }
 

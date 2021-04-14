@@ -7,11 +7,27 @@ import java.io.IOException;
 import java.sql.*;
 import java.io.*;
 
+
+
+/**
+ * Class for the furniture category of Desk this accounts for the cheapestPrice
+ * Also the stores which hold this furniture piece it accounts for
+ * Writes into the file as well and creates the output.txt for the order
+ */
+
 public class Desk {
-
-    /////// DATA MEMBERS:
+   
+    /////// The DATA MEMBERS:
+    /**
+     * Creates the connection to the Database relating
+     * towards the MySQL server
+     */
     public Connection createConnection;
-
+    
+    /**
+     * ResultSet which will hold all of the rows in which can
+     * later be accessed by us
+     */
     public ResultSet rs;
 
 
@@ -31,18 +47,48 @@ public class Desk {
      * User's password
      */
     public String PASSWORD;
-
+    /**
+     * Category for the Desk which is the desk
+     */
     private String category;
-    private String type;
-    private int quantity;
-    private StringBuilder manufacturers = new StringBuilder();
-    private boolean boughtParts = true;
-    private boolean fileStatus = false;
-    static ArrayList<String> input = new ArrayList<>();
-    static ArrayList<String> partsOrdered = new ArrayList<>();
-    static ArrayList<String> repeats = new ArrayList<>();
-    int totalPrice;
 
+    /**
+     * The type which includes standing, adjustable, and traditional
+     */
+
+    private String type;
+    /**
+     * The number of the furniture ordered by the user which is stored in here
+     */
+    private int quantity;
+    /**
+     * Stores the manufacturers for this specific part
+     */
+    private StringBuilder manufacturers = new StringBuilder();
+    //This boolean will keep a track of the parts which have been bought
+    private boolean boughtParts = true;
+    //Checks if the file is being created or not for the unitTesting purposes
+    private boolean fileStatus = false;
+    /**
+     * The array list which stores the database same categories 
+     */
+    static ArrayList<String> input = new ArrayList<>();
+    /**
+     * The ones which get removed from the database and later on 
+     * for writing in the output file 
+     */
+    static ArrayList<String> partsOrdered = new ArrayList<>();
+    /**
+     * If there is any repeats of the manuIDs it will store them 
+     * in here to make sure the same ID is not being 
+     * written twice
+     */
+    static ArrayList<String> repeats = new ArrayList<>();
+    /**
+     * The totalPrice for the whole order is being stored in this int
+     */
+    int totalPrice;
+    //Start of the getters and setters which get the public variables 
     public String getDBURL() {
         return this.DBURL;
     }
@@ -106,7 +152,9 @@ public class Desk {
         // Does nothing
     }
 
-    // Desk CTOR:
+    /**
+   * Desk constructor takes in 6 parameters for creating the Desk and intializing it 
+   */
     Desk(String category, String type, int quantity, String dburl, String username, String password) {
         this.category = category;
         this.type = type;
@@ -115,7 +163,10 @@ public class Desk {
         this.USERNAME = username;
         this.PASSWORD = password;
     }
-
+    /**
+     * Creates the connection using the Drivers which get added to the classpath and 
+     * checks if the connection is being made or not 
+     */
     public void initializeConnection() {
         try {
             createConnection = DriverManager.getConnection(DBURL, USERNAME, PASSWORD);
@@ -124,6 +175,13 @@ public class Desk {
             e.printStackTrace();
         }
     }
+    /**
+     * 
+     * @throws IOException throws the IOException if the writeFile methods
+     * are unsucessful 
+     * No parameters for this method
+     * Calls most of the methods in the order which they fulfill the requirement 
+     */
 
     public void callEverything() throws IOException {
         initializeConnection();
@@ -139,6 +197,13 @@ public class Desk {
             writeFileSuggestedManu();
         }
     }
+    /**
+     * 
+     * @param category Takes in the category which the user requested for 
+     * Then creates a query which can realte with the database to store the Price
+     * and the ID in an ArrayList in that order respectively 
+     * Also throws an exception if it failed in getting this done 
+     */
 
     public void getEverything(String category) {
         Statement stmnt;
@@ -155,6 +220,14 @@ public class Desk {
             e.printStackTrace();
         }
     }
+
+    /**
+     * 
+     * @param input Takes in this array list which was taken from the user in that specific 
+     * format which we had desired in the getEverything method and then using regex
+     * to get the price from this arrayList which then sorts it from lowest to highest
+     * Using sorting algorithm called BubbleSort 
+     */
 
     public void sortPrice(ArrayList<String> input) {
         for (int i = input.size(); i > 0; i--) {
@@ -176,6 +249,11 @@ public class Desk {
     }
 
     ////////// New Method for numberOfParts
+    /**
+     * 
+     * @param quantity Takes in the user desired furniture pieces  
+     * @return Adds to maximum value which can be taken 
+     */
 
     public int numberOfParts(int quantity) {
         int value = 0;
@@ -184,10 +262,29 @@ public class Desk {
     }
 
     ///////// New Method for checkPrice:
+    /**
+     * 
+     * @return Determines the lowestPrice takes in the factor of the kneelingprice
+     * Which has a different method due to its requriements 
+     * And has a returnPrice which is the lowest possible in
+     * the combinations 
+     */
 
     public int lowestPrice() {
         return checkPriceAll(input);
     }
+    /**
+     * 
+     * @param input Takes in that input array made earlier in get everything 
+     * @return Returns the lowest price possible in the combinations 
+     * This category of chair will check for which is not including
+     * The kneeling and is for the task,mesh,executive, and
+     * the ergonmoic 
+     * Uses regex to sepearte this arrayList 
+     * Also has multiple different edge cases which
+     * Is taken in account for when collecting
+     * The combinations 
+     */
 
     public int checkPriceAll(ArrayList<String> input) {
         int priceSum = 0;
