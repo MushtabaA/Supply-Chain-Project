@@ -278,8 +278,7 @@ public class Desk {
      * @param input Takes in that input array made earlier in get everything 
      * @return Returns the lowest price possible in the combinations 
      * This category of chair will check for which is not including
-     * The kneeling and is for the task,mesh,executive, and
-     * the ergonmoic 
+     * The kneeling and is for the standing, adjustable, and traditional
      * Uses regex to sepearte this arrayList 
      * Also has multiple different edge cases which
      * Is taken in account for when collecting
@@ -317,6 +316,7 @@ public class Desk {
                     ResultSet rs2 = stmnt2.executeQuery("SELECT * FROM DESK WHERE ID = " + "'" + idString + "'");
 
                     while (rs2.next()) {
+                    trigger = 0;
                     noCounter = 0;
 
                         if (rs2.getString("Legs").equals("N") && rs2.getString("Top").equals("N")

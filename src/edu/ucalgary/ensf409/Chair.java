@@ -318,6 +318,7 @@ public class Chair {
                     //Different cases which could occur during the database combinations 
                     //Collecting them 
                         while(rs2.next()) {
+                        trigger = 0;
                         noCounter = 0;
 
                         if (rs2.getString("Legs").equals("N") && rs2.getString("Arms").equals("N")
@@ -427,6 +428,7 @@ public class Chair {
                      //Different cases which could occur during the database combinations 
                     //Collecting them 
                         while(rs2.next()) {
+                        trigger = 0;
                         noCounter = 0;
 
                         if (rs2.getString("Legs").equals("N") && rs2.getString("Arms").equals("N")

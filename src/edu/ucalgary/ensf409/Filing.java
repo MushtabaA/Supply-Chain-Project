@@ -262,6 +262,18 @@ public class Filing {
         return checkPriceAll(input);
     }
 
+    /**
+     * 
+     * @param input Takes in that input array made earlier in get everything 
+     * @return Returns the lowest price possible in the combinations 
+     * This category of chair will check for which is not including
+     * The kneeling and is for the small, medium and large
+     * Uses regex to sepearte this arrayList 
+     * Also has multiple different edge cases which
+     * Is taken in account for when collecting
+     * The combinations 
+     */
+
     public int checkPriceAll(ArrayList<String> input) {
         int priceSum = 0;
         int maxParts = numberOfParts(quantity);
@@ -293,7 +305,8 @@ public class Filing {
                     ResultSet rs2 = stmnt2.executeQuery("SELECT * FROM FILING WHERE ID = " + "'" + idString + "'");
 
                     while (rs2.next()) {
-                        noCounter = 0;
+                    trigger = 0;
+                    noCounter = 0;
 
                         if (rs2.getString("Rails").equals("N") && rs2.getString("Drawers").equals("N")
                                 && rs2.getString("Cabinet").equals("N")) {
