@@ -294,6 +294,20 @@ public class Desk {
         int trigger = 0;
         int noCounter = 0;
         boolean empty = false;
+        boolean isRepeat = false;
+        boolean oneDesk = false;
+        boolean trigger1 = false;
+        boolean trigger1Repeat = false;
+        boolean trigger2 = false;
+        boolean trigger2Repeat = false;
+        boolean trigger3 = false;
+        boolean trigger3Repeat = false;
+        boolean trigger4 = false;
+        boolean trigger4Repeat = false;
+
+        if (maxParts == 1) {
+            oneDesk = true;
+        }
 
         for (int i = 0; i < input.size(); i++) {
 
@@ -318,6 +332,13 @@ public class Desk {
                     while (rs2.next()) {
                     trigger = 0;
                     noCounter = 0;
+                        isRepeat = false;
+                        trigger1 = false;
+                        trigger1Repeat = false;
+                        trigger2 = false;
+                        trigger2Repeat = false;
+                        trigger3 = false;
+                        trigger3Repeat = false;
 
                         if (rs2.getString("Legs").equals("N") && rs2.getString("Top").equals("N")
                                 && rs2.getString("Drawer").equals("N")) {
@@ -326,9 +347,11 @@ public class Desk {
                         }
                         if (rs2.getString("Legs").equals("Y")) {
                             numOfLegs++;
+                            trigger1 = true;
                             if (numOfLegs > maxParts) {
                                 numOfLegs--;
                                 trigger += 1;
+                                trigger1Repeat = true;
                             }
                         }
                         if (rs2.getString("Legs").equals("N")) {
@@ -336,9 +359,11 @@ public class Desk {
                         }
                         if (rs2.getString("Top").equals("Y")) {
                             numOfTops++;
+                            trigger2 = true;
                             if (numOfTops > maxParts) {
                                 numOfTops--;
                                 trigger += 1;
+                                trigger2Repeat = true;
                             }
                         }
                         if (rs2.getString("Top").equals("N")) {
@@ -346,13 +371,47 @@ public class Desk {
                         }
                         if (rs2.getString("Drawer").equals("Y")) {
                             numOfDrawers++;
+                            trigger3 = true;
                             if (numOfDrawers > maxParts) {
                                 numOfDrawers--;
                                 trigger += 1;
+                                trigger3Repeat = true;
                             }
                         }
                         if (rs2.getString("Drawer").equals("N")) {
                             noCounter++;
+                        }
+                    }
+
+                    if (numOfLegs == 1 && numOfTops == 1 && numOfDrawers == 1) {
+                    } else {
+                        if (isRepeat && oneDesk) {
+                            if (trigger1) {
+                                if (trigger1 && trigger1Repeat) {
+                                } else {
+                                    numOfLegs--;
+                                }
+                            }
+                            if (trigger2) {
+                                if (trigger2 && trigger2Repeat) {
+                                } else {
+                                    numOfTops--;
+                                }
+                            }
+                            if (trigger3) {
+                                if (trigger3 && trigger3Repeat) {
+                                } else {
+                                    numOfDrawers--;
+                                }
+                            }
+                            isRepeat = false;
+                            trigger1 = false;
+                            trigger2 = false;
+                            trigger3 = false;
+                            trigger1Repeat = false;
+                            trigger2Repeat = false;
+                            trigger3Repeat = false;
+                            continue;
                         }
                     }
                     if (empty) {

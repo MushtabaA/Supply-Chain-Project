@@ -398,6 +398,20 @@ public class Chair {
         int numOfSeats = 0;
         int numOfCushions = 0;
         int trigger = 0;
+        boolean isRepeat = false;
+        boolean oneChair = false;
+        boolean trigger1 = false;
+        boolean trigger1Repeat = false;
+        boolean trigger2 = false;
+        boolean trigger2Repeat = false;
+        boolean trigger3 = false;
+        boolean trigger3Repeat = false;
+        boolean trigger4 = false;
+        boolean trigger4Repeat = false;
+
+        if (maxParts == 1) {
+            oneChair = true;
+        }
         //Keeps a track of N's in the database row 
         int noCounter = 0;
         boolean empty = false;
@@ -430,6 +444,15 @@ public class Chair {
                         while(rs2.next()) {
                         trigger = 0;
                         noCounter = 0;
+                        isRepeat = false;
+                        trigger1 = false;
+                        trigger1Repeat = false;
+                        trigger2 = false;
+                        trigger2Repeat = false;
+                        trigger3 = false;
+                        trigger3Repeat = false;
+                        trigger4 = false;
+                        trigger4Repeat = false;
 
                         if (rs2.getString("Legs").equals("N") && rs2.getString("Arms").equals("N")
                                 && rs2.getString("Seat").equals("N") && rs2.getString("Cushion").equals("N")) {
@@ -438,9 +461,12 @@ public class Chair {
                         }
                         if (rs2.getString("Legs").equals("Y")) {
                             numOfLegs++;
+                            trigger1 = true;
                             if (numOfLegs > maxParts) {
                                 numOfLegs--;
                                 trigger += 1;
+                                isRepeat = true;
+                                trigger1Repeat = true;
                             }
                         }
                         if (rs2.getString("Legs").equals("N")) {
@@ -448,9 +474,12 @@ public class Chair {
                         }
                         if (rs2.getString("Arms").equals("Y")) {
                             numOfArms++;
+                            trigger2 = true;
                             if (numOfArms > maxParts) {
                                 numOfArms--;
                                 trigger += 1;
+                                isRepeat = true;
+                                trigger2Repeat = true;
                             }
                         }
                         if (rs2.getString("Arms").equals("N")) {
@@ -458,9 +487,12 @@ public class Chair {
                         }
                         if (rs2.getString("Seat").equals("Y")) {
                             numOfSeats++;
+                            trigger3 = true;
                             if (numOfSeats > maxParts) {
                                 numOfSeats--;
                                 trigger += 1;
+                                isRepeat = true;
+                                trigger3Repeat = true;
                             }
                         }
                         if (rs2.getString("Seat").equals("N")) {
@@ -468,15 +500,59 @@ public class Chair {
                         }
                         if (rs2.getString("Cushion").equals("Y")) {
                             numOfCushions++;
+                            trigger4 = true;
                             if (numOfCushions > maxParts) {
                                 numOfCushions--;
                                 trigger += 1;
+                                isRepeat = true;
+                                trigger4Repeat = true;
                             }
                         }
                         if (rs2.getString("Cushion").equals("N")) {
                             noCounter++;
                         }
                     }
+                    
+                    if (numOfLegs == 1 && numOfArms == 1 && numOfSeats == 1 && numOfCushions == 1) {
+                    } else {
+                        if (isRepeat && oneChair) {
+                            if (trigger1) {
+                                if (trigger1 && trigger1Repeat) {
+                                } else {
+                                    numOfLegs--;
+                                }
+                            }
+                            if (trigger2) {
+                                if (trigger2 && trigger2Repeat) {
+                                } else {
+                                    numOfArms--;
+                                }
+                            }
+                            if (trigger3) {
+                                if (trigger3 && trigger3Repeat) {
+                                } else {
+                                    numOfSeats--;
+                                }
+                            }
+                            if (trigger4) {
+                                if (trigger4 && trigger4Repeat) {
+                                } else {
+                                    numOfCushions--;
+                                }
+                            }
+                            isRepeat = false;
+                            trigger1 = false;
+                            trigger2 = false;
+                            trigger3 = false;
+                            trigger4 = false;
+                            trigger1Repeat = false;
+                            trigger2Repeat = false;
+                            trigger3Repeat = false;
+                            trigger4Repeat = false;
+                            continue;
+                        }
+                    }
+
                     if (empty) {
                         empty = false;
                         continue;
