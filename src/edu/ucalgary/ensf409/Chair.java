@@ -1,5 +1,7 @@
-package edu.ucalgary.ensf409;
 
+//Package statement used for this class
+package edu.ucalgary.ensf409;
+//Import statements used
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.ArrayList;
@@ -7,11 +9,23 @@ import java.io.IOException;
 import java.sql.*;
 import java.io.*;
 
+/**
+ * Class for the furniture category of Chair this accounts for the cheapestPrice
+ * Also the stores which hold this furniture piece it accounts for
+ * Writes into the file as well and creates the output.txt for the order
+ */
 public class Chair {
 
-    /////// DATA MEMBERS:
+    /////// The DATA MEMBERS:
+    /**
+     * Creates the connection to the Database relating
+     * towards the MySQL server
+     */
     public Connection createConnection;
-
+    /**
+     * ResultSet which will hold all of the rows in which can
+     * later be accessed by us
+     */
     public ResultSet rs;
 
 
@@ -19,24 +33,33 @@ public class Chair {
      * Database url of the following format jdbc:subprotocol:subname
      */
     public String DBURL;
-
-        // store the database url information
     /**
      * Database user on whose behalf the connection will be made
      */
     public String USERNAME;
-
-        // store the user's account username
     /**
-     * User's password
+     * User's password for the ability to access the database
      */
     public String PASSWORD;
-
+    /**
+     * Category for the Chair which is the chair
+     */
     private String category;
+    /**
+     * The type which includes mesh,executive,ergonomic,task, and kneeling
+     */
     private String type;
+    /**
+     * The number of the furniture ordered by the user which is stored in here
+     */
     private int quantity;
+    /**
+     * Stores the manufacturers for this specific part
+     */
     public StringBuilder manufacturers = new StringBuilder();
+    //This boolean will keep a track of the parts which have been bought
     private boolean boughtParts = true;
+    //Checks if the file is being created or not for the unitTesting purposes
     private boolean fileStatus = false;
     static ArrayList<String> input = new ArrayList<>();
     static ArrayList<String> partsOrdered = new ArrayList<>();
