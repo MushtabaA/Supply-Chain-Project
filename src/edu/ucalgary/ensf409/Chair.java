@@ -392,11 +392,17 @@ public class Chair {
     public int checkPriceAll(ArrayList<String> input) {
         //Data fields used in this method 
         int priceSum = 0;
+        //Uses the method to receive the the limit of parts
         int maxParts = numberOfParts(quantity);
+        //These will keep a track of the amount 
+        //of peices 
         int numOfLegs = 0;
         int numOfArms = 0;
         int numOfSeats = 0;
         int numOfCushions = 0;
+        //Trigger for checking the cases which
+        //Could occur in which the order is 
+        //Not able to be completed 
         int trigger = 0;
         boolean isRepeat = false;
         boolean oneChair = false;
@@ -408,7 +414,7 @@ public class Chair {
         boolean trigger3Repeat = false;
         boolean trigger4 = false;
         boolean trigger4Repeat = false;
-
+        //If there is already enough parts then this will go again 
         if (maxParts == 1) {
             oneChair = true;
         }
@@ -459,6 +465,8 @@ public class Chair {
                             empty = true;
                             break;
                         }
+                        //Checks for the chairs legs and what their status 
+                        //Is in the database 
                         if (rs2.getString("Legs").equals("Y")) {
                             numOfLegs++;
                             trigger1 = true;
@@ -472,6 +480,8 @@ public class Chair {
                         if (rs2.getString("Legs").equals("N")) {
                             noCounter++;
                         }
+                          //Checks for the chairs arms and what their status 
+                        //Is in the database 
                         if (rs2.getString("Arms").equals("Y")) {
                             numOfArms++;
                             trigger2 = true;
@@ -485,6 +495,8 @@ public class Chair {
                         if (rs2.getString("Arms").equals("N")) {
                             noCounter++;
                         }
+                            //Checks for the chairs seat and what their status 
+                        //Is in the database 
                         if (rs2.getString("Seat").equals("Y")) {
                             numOfSeats++;
                             trigger3 = true;
@@ -498,6 +510,8 @@ public class Chair {
                         if (rs2.getString("Seat").equals("N")) {
                             noCounter++;
                         }
+                            //Checks for the chairs cushion and what their status 
+                        //Is in the database 
                         if (rs2.getString("Cushion").equals("Y")) {
                             numOfCushions++;
                             trigger4 = true;
@@ -587,25 +601,31 @@ public class Chair {
      * Collected in the earlier input ArrayList 
      * And then checks if they are repeated in the order so 
      * They are not written twice in the output file 
-     * Hence 
      */
     public void suggestedManufacturer() {
-
+        //Try and catch block for the the terminal printing 
         try {
+            //This will get printed to the console before the manufacturers string 
             System.out.println("Order cannot be fulfilled based on current inventory.");
             System.out.print("Suggested Manufacturers can also be viewed in the output.txt file.");
             System.out.println("The suggested Manufacturers are: ");
+            //For loop which will iterate through the input array originally 
             for (int i = 0; i < input.size(); i++) {
+                //Regex for finding the manuID in the array
                 final String REGEX3 = "([0-9]+$)";
                 final Pattern PATTERN3 = Pattern.compile(REGEX3);
                 final Matcher MAT3 = PATTERN3.matcher(input.get(i));
+                //Boolean created to make sure it is not repeated 
                 boolean isRepeat = false;
+                //Uses the regex to get the manuID only 
                 if (MAT3.find()) {
                     String manuID = MAT3.group();
 
                     Statement stmnt = createConnection.createStatement();
+                    //Quert which will select everything from it 
                     rs = stmnt.executeQuery("SELECT * FROM MANUFACTURER");
-
+                    //This going through the repeats array and if there 
+                    //One seen then it will break out of this 
                     if (i > 0) {
                         for (int j = 0; j < repeats.size(); j++) {
                             if (manuID.equals(repeats.get(j))) {
@@ -614,10 +634,11 @@ public class Chair {
                             }
                         }
                     }
+                    //If there is a repeat then it will go again
                     if (isRepeat) {
                         continue;
                     }
-
+                    //This will store the manuID in the String Builder
                     while (rs.next()) {
                         if (rs.getString("ManuID").equals(manuID)) {
                             manufacturers.append("Name: " + rs.getString("Name") + "\n");
@@ -629,29 +650,48 @@ public class Chair {
         } catch (SQLException e) {
             // Does nothing
         }
+        //Prints the string builder out by converting it to a string
         System.out.println(manufacturers.toString());
     }
-
+    /**
+     * Deletion of the parts which have been ordered 
+     * Uses the array generated in the checkPriceAll method 
+     * Which then later on will update the database 
+     * So we don't buy the same parts again and again
+     */
     public void removeParts() {
         Statement stmnt;
         try {
+            //For loop which will iterate through the arraylist of parts which
+            //The user will buy in order to complete the order 
             for (int i = 0; i < partsOrdered.size(); i++) {
                 stmnt = createConnection.createStatement();
+                //Query similar to Assignment 9
                 stmnt.executeUpdate("DELETE FROM CHAIR WHERE ID = "+ "'" + partsOrdered.get(i) + "'");
                 stmnt.close();
             }
         }
-
+        //If there is something gone wrong then this message will be printed to 
+        //To prompt the user 
         catch (SQLException e) {
             System.out.println("Deleting the part was unsuccessful");
             e.printStackTrace();
         }
     }
-
+    /**
+     * This writeFile method is for order sucessful completetion and is only 
+     * Called if the order requirements are met 
+     * @param originalRequest The user request which inputed in the terminal is used here 
+     * @param totalPrice Price which we ended up calculating based on our algorithm 
+     * @return The boolean which checks if the file is created 
+     * @throws IOException If the file is not created then throws this exception
+     */
     public boolean writeFileChairOrder(String originalRequest, int totalPrice) throws IOException {
         try {
-            FileWriter fw = new FileWriter("output.txt");
+            //File name which will be created with 
+            FileWriter fw = new FileWriter("orderform.txt");
             BufferedWriter bw = new BufferedWriter(fw);
+            //This writes into the file using the BufferedWriter
             bw.write("Furniture Order Form");
             bw.write('\n');
             bw.write("Faculty Name: ");
@@ -663,6 +703,7 @@ public class Chair {
             bw.write("Original Request: " + originalRequest);
             bw.write('\n');
             bw.write("Items Ordered" + "\n");
+            //This will iterate through the parts which are being ordered 
             for (int i = 0; i < partsOrdered.size(); i++) {
                 bw.write("ID: " + partsOrdered.get(i) + "\n");
             }
@@ -675,7 +716,13 @@ public class Chair {
         }
         return fileStatus = true;
     }
-    
+    /**
+     * Method if the order is not able to completed to write to the file 
+     * And then this will use the String Builder and convert 
+     * It to a proper string for the user to read 
+     * @return The boolean which checks if the file is created
+     * @throws IOException If the file is not created then throws this exception
+     */
     public boolean writeFileSuggestedManu() throws IOException {
         try {
             FileWriter fw = new FileWriter("output.txt");
