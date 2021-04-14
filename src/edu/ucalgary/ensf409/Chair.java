@@ -162,8 +162,10 @@ public class Chair {
      */
     public void initializeConnection() {
         try {
+            //Uses the drivers which will create the connection 
             createConnection = DriverManager.getConnection(DBURL, USERNAME, PASSWORD);
         } catch (SQLException e) {
+            //If not able to prints this message out 
             System.out.println("Connection was failed try again.");
             e.printStackTrace();
         }
@@ -178,6 +180,7 @@ public class Chair {
     public void callEverything() throws IOException {
         initializeConnection();
         getEverything(category);
+        //Sorts the prices from lowest to highest when gathered 
         sortPrice(input);
         totalPrice = lowestPrice();
         //Checks if the parts are being taken in the order if not

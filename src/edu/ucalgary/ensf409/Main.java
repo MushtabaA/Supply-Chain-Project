@@ -1,8 +1,8 @@
+//Package statement 
 package edu.ucalgary.ensf409;
-
+//Import statements used in this 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.io.IOException;
 import java.sql.*;
 import java.util.Scanner;
 
@@ -11,7 +11,8 @@ public class Main {
 	public Main() {
 		// Does nothing
 	}
-
+	//Instances of the furniture type which are used later in the main method
+	//To access the class 
 	static Chair chair;
 	static Desk desk;
 	static Lamp lamp;
@@ -31,7 +32,7 @@ public class Main {
 	public String PASSWORD; // store the user's account password
 
 	public String furnitureInput;
-
+	//Getters and setters for the furniture input 
 	public String getFurnitureInput() {
 		return this.furnitureInput;
 	}
@@ -49,7 +50,7 @@ public class Main {
 	 * New instance of the connection type
 	 */
 	public Connection createConnection;
-
+	//Getters and setters for the connection 
 	public Connection getCreateConnection() {
 		return this.createConnection;
 	}
@@ -124,18 +125,26 @@ public class Main {
 	public int setFurnitureQuantity(String furnitureQuantity) {
 		return this.furnitureQuantity;
 	}
-
+	/**
+     * Creates the connection using the Drivers which get added to the classpath and 
+     * checks if the connection is being made or not 
+     */
 	public void initializeConnection() {
 		try {
+			//Uses the drivers which will create the connection 
 			createConnection = DriverManager.getConnection(getDburl(), getUsername(), getPassword());
 		} catch (SQLException e) {
 			System.out.println("Connection was failed try again.");
 			e.printStackTrace();
 		}
 	}
-
+	/**
+	 * Close method which will help with closing the connection 
+	 * In the main method when called 
+	 */
 	public void close() {
 		try {
+			//Closes the connection to the database
 			createConnection.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -152,27 +161,37 @@ public class Main {
 	// Print Out: "Enter your order request like the following example:
 	// "mesh chair, 2", and set furniture input (using the setter)
 	// Call the splitOrder function
+	/**
+	 * This our only interface with the user the welcome screne in the 
+	 * Terminal and the scanner which will take in the users request 
+	 * @throws Exception Will do this if the user puts in something which
+	 * Is not an furniturer type, category or a negative quantity
+	 */
 	public void userMenu() throws Exception {
-
-		System.out.println("          WELCOME TO:        ");
-
+		//Title printed 
+		System.out.println("          WELCOME TO:    INVENTORY MANAGER     ");
+		//Contributors name printed 
 		System.out.println("CREATED BY: Mushtaba Al Yasseen, Abhay Khosla, and Parbir Lehal");
+		//Scanner which is implemented to read from the terminal hence the .in
 		sc = new Scanner(System.in);
 		System.out.println("Enter Username for the Database access: ");
+		//Stores the username which the user will enter in 
 		this.USERNAME = sc.nextLine();
 
 		System.out.println("Enter Password for the Database access: ");
+		//Stores the password the user will enter in 
 		this.PASSWORD = sc.nextLine();
-
+		//Prints the completed the URL out on the screen 
 		System.out.println("The URL for the connection is this following: jdbc:mysql://localhost/inventory" + "/"
 				+ USERNAME + "/" + PASSWORD);
 		this.DBURL = "jdbc:mysql://localhost/inventory";
+		//Asks for the users request 
 		System.out.println("Enter your order request like the following example: mesh chair, 1");
 		this.furnitureInput = sc.nextLine();
+		//If any upper case accidentatly is inputed then will convert them 
 		furnitureInput.toLowerCase();
+		//Calls the split order method which will use regex to sepearte 
 		splitOrder(furnitureInput);
-
-		// Set each variable to password, username, and url strings above
 	}
 
 	// splitOrder:
@@ -186,53 +205,71 @@ public class Main {
 	// Then call the related class' constructor, and then pass in all 3
 	// local data members (the category, type, and quantity)
 	// Ex: Chair(category, type, quantity)
+	/**
+	 * 
+	 * @param furnitureInput Takes in the original request to make sure that it
+	 * is properly formatted into the variables created 
+	 * @throws Exception //Exception if there is wrong input by the user 
+	 */
 	public void splitOrder(String furnitureInput) throws Exception {
+		//Regex for the type
 		final String REGEX = "(swing arm|[a-zA-Z]+)";
 		final Pattern PATTERN = Pattern.compile(REGEX);
-
+		//Regex for furniture category 
 		final String REGEX2 = "(l+a+m+p+|c+h+a+i+r+|f+i+l+i+n+g+|d+e+s+k+)";
 		final Pattern PATTERN2 = Pattern.compile(REGEX2);
-
+		//Regex for furntiure quantity 
 		final String REGEX3 = "([0-9]+)";
 		final Pattern PATTERN3 = Pattern.compile(REGEX3);
-
+		//Using the matcher 
 		final Matcher MAT = PATTERN.matcher(furnitureInput);
 		final Matcher MAT2 = PATTERN2.matcher(furnitureInput);
 		final Matcher MAT3 = PATTERN3.matcher(furnitureInput);
-
+		//Using the find method to group for these 
 		if (MAT.find()) {
 			furnitureCategory = MAT.group();
 		} else {
+			//If anything wrong prints this out 
 			throw new Exception("The given furniture category was invalid");
 		}
-
+		//Using the find method to group for these 
 		if (MAT2.find()) {
 			furnitureType = MAT2.group();
 		} else {
+			//If anything wrong prints this out 
 			throw new Exception("The given furniture type was invalid, valid furniture types include:"
 					+ "chair, desk, lamp, and filing");
 		}
-
+		//Using the find method to group for these 
 		if (MAT3.find()) {
+			//Parses the string to convert into integer 
 			furnitureQuantity = Integer.parseInt(MAT3.group());
 		} else {
+			//If anything wrong prints this out 
 			throw new Exception("The given quantity was invalid, must enter a positive number greater than 0.");
 		}
 	}
-
+/**
+ * 
+ * @param args arguments which are taken in the main method 
+ * @throws Exception Will be done if there is something which is not valid 
+ */
 	public static void main(String[] args) throws Exception {
-
+		//New instance of this class to call the methods 
 		Main main = new Main();
-
+		//Prints the user menu when the method is ran 
 		main.userMenu();
+		//Creates the connection 
 		main.initializeConnection();
+		//Checks for the boundary cases using the getters 
 		if (main.getFurnitureType().equals("chair") || main.getFurnitureType().equals("desk")
 				|| main.getFurnitureType().equals("lamp") || main.getFurnitureType().equals("filing")) {
 		} else {
+			//Prints the error message if anything is invalid 
 			throw new Exception("The given furniture type was invalid, valid furniture types include:"
 					+ "chair, desk, lamp, and filing");
 		}
-
+		//Checks for the boundary cases using the getters 
 		if (main.getFurnitureCategory().equals("kneeling") || main.getFurnitureCategory().equals("task")
 				|| main.getFurnitureCategory().equals("mesh") || main.getFurnitureCategory().equals("executive")
 				|| main.getFurnitureCategory().equals("ergonomic") || main.getFurnitureCategory().equals("standing")
@@ -241,18 +278,21 @@ public class Main {
 				|| main.getFurnitureCategory().equals("swing arm") || main.getFurnitureCategory().equals("small")
 				|| main.getFurnitureCategory().equals("medium") || main.getFurnitureCategory().equals("large")) {
 		} else {
+			//Prints the error message if anything is invalid 
 			throw new Exception("The given furniture category was invalid");
 		}
 
 		if (main.getFurnitureQuantity() <= 0) {
 			throw new Exception(
+					//Prints the error message if anything is invalid 
 					"The given furniture quantity was invalid, must enter a positive number greater than 0.");
 		}
-
+		//Checks if it is chair, desk, lamp or the filing 
+		//Will call the constructors and pass in the information collected 
 		if (main.getFurnitureType().equals("chair")) {
 			chair = new Chair(main.getFurnitureCategory(), main.getFurnitureType(), main.getFurnitureQuantity(),
 					main.DBURL, main.USERNAME, main.PASSWORD);
-
+			//Calls the everything method which has in order of how the program should be run 
 			chair.callEverything();
 
 		} else if (main.getFurnitureType().equals("desk")) {
@@ -274,7 +314,7 @@ public class Main {
 			filing.callEverything();
 
 		}
-
+		//Finally closes it at the very end 
 		main.close();
 
 	}
