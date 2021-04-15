@@ -1,9 +1,15 @@
-
+/**
+ * mushtaba.alyasseen@ucalgary.ca
+ * UCID: 30094000
+ * abhay.khosla1@ucalgary.ca
+ * UCID: 30085789
+ * parbir.lehal@ucalgary.ca
+ * UCID: 30096001
+ */
 //Package statement used for this class
 package edu.ucalgary.ensf409;
 //Import statements used
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
+
 import java.util.ArrayList;
 import java.io.IOException;
 import java.sql.*;

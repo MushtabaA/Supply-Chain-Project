@@ -1,11 +1,2 @@
-Furniture Order Form
-Faculty Name: 
-Contact: 
-Date: 
-Original Request: large filing, 2
-Items Ordered
-ID: F010
-ID: F011
-ID: F012
-ID: F015
-Total Price: $600
+Order cannot be fulfilled based on current inventory.
+Suggested Manufacturers:

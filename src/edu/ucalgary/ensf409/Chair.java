@@ -1,4 +1,12 @@
-
+/**
+ * Name: Mushtaba, Abhay, Parbir
+ * mushtaba.alyasseen@ucalgary.ca
+ * UCID: 30094000
+ * abhay.khosla1@ucalgary.ca
+ * UCID: 30085789
+ * parbir.lehal@ucalgary.ca
+ * UCID: 30096001
+ */
 //Package statement used for this class
 package edu.ucalgary.ensf409;
 //Import statements used
@@ -82,7 +90,7 @@ public class Chair {
     /**
      * The totalPrice for the whole order is being stored in this int
      */
-    int totalPrice;
+    private int totalPrice;
 
     /**
      * Possible combinations which are found recursively and stored in this arraylist
@@ -102,7 +110,7 @@ public class Chair {
     /**
      * To see if there has been found 
      */
-     boolean combinationFound = false;
+    private boolean combinationFound = false;
     /**
      * ManufacturerID for storing the ids, which will be later 
      * Used for writing into the file 
@@ -188,7 +196,7 @@ public class Chair {
      * Creates the connection using the Drivers which get added to the classpath and 
      * checks if the connection is being made or not 
      */
-    public void initializeConnection() {
+    public void initializeConnection() { //Abhay
         try {
             //Uses the drivers which will create the connection 
             createConnection = DriverManager.getConnection(DBURL, USERNAME, PASSWORD);
@@ -205,7 +213,7 @@ public class Chair {
      * No parameters for this method
      * Calls most of the methods in the order which they fulfill the requirement 
      */
-    public void callEverything() throws IOException {
+    public void callEverything() throws IOException { //Abhay
         initializeConnection();
         getEverything(category);
         getManufacturers(category);
@@ -238,7 +246,7 @@ public class Chair {
      * and the ID in an ArrayList in that order respectively 
      * Also throws an exception if it failed in getting this done 
      */
-    public void getEverything(String category) {
+    public void getEverything(String category) { //Abhay
         Statement stmnt;
         try {
             stmnt = createConnection.createStatement();
@@ -261,7 +269,7 @@ public class Chair {
      * @param category Takes in the category which the user passed into
      * their original request helps with accessing the database 
      */
-    public void getManufacturers(String category) {
+    public void getManufacturers(String category) { //Abhay
         Statement stmnt;
         try {
             //Makes a connection via a statement 
@@ -525,7 +533,7 @@ public class Chair {
      * Two temp arraylists to swap the elements in the array and 
      * ensures there is no overlap 
      */
-    public void sortLowestPrice() {
+    public void sortLowestPrice() { //Abhay
         for (int i = prices.size(); i > 0; i--) {
             for (int j = 0; j < prices.size() - 1; j++) {
                     if (prices.get(j) > prices.get(j + 1)) {
@@ -549,7 +557,7 @@ public class Chair {
      * @return The price from the arrayList which is at the first
      * Index also the lowest 
      */
-    public int getLowestPrice() {
+    public int getLowestPrice() { //Abhay
         return prices.get(0);
     }
 
@@ -560,7 +568,7 @@ public class Chair {
      * And then checks if they are repeated in the order so 
      * They are not written twice in the orderform file 
      */
-    public void suggestedManufacturer() {
+    public void suggestedManufacturer() { //Abhay
         //Try and catch block for the the terminal printing 
         try {
             //This will get printed to the console before the manufacturers string 
@@ -611,7 +619,7 @@ public class Chair {
      * Which then later on will update the database 
      * So we don't buy the same parts again and again
      */
-    public void removeParts() {
+    public void removeParts() { //Abhay
         ArrayList<String> removedParts = confirmedCombinations.get(0);
         Statement stmnt;
         try {
@@ -639,7 +647,7 @@ public class Chair {
      * @return The boolean which checks if the file is created 
      * @throws IOException If the file is not created then throws this exception
      */
-    public boolean writeFileChairOrder(String originalRequest, int totalPrice) throws IOException {
+    public boolean writeFileChairOrder(String originalRequest, int totalPrice) throws IOException { //Abhay
         try {
             //File name which will be created with 
             FileWriter fw = new FileWriter("orderform.txt");
@@ -677,7 +685,7 @@ public class Chair {
      * @return The boolean which checks if the file is created
      * @throws IOException If the file is not created then throws this exception
      */
-    public boolean writeFileSuggestedManu() throws IOException {
+    public boolean writeFileSuggestedManu() throws IOException { //Abhay
         try {
             FileWriter fw = new FileWriter("orderform.txt");
             BufferedWriter bw = new BufferedWriter(fw);

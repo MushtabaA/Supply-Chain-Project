@@ -1,8 +1,15 @@
-//Package statement 
+/**
+ * Name: Mushtaba, Abhay, Parbir
+ * mushtaba.alyasseen@ucalgary.ca
+ * UCID: 30094000
+ * abhay.khosla1@ucalgary.ca
+ * UCID: 30085789
+ * parbir.lehal@ucalgary.ca
+ * UCID: 30096001
+ */
+//Package statement
 package edu.ucalgary.ensf409;
-//Import statements used in this 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+//Import statements used in this
 import java.sql.*;
 import java.util.Scanner;
 
@@ -113,14 +120,6 @@ public class Main {
 		return this.furnitureQuantity;
 	}
 
-	// Start of setters
-	public String setFurnitureType(String furnitureType) {
-		return this.furnitureType;
-	}
-
-	public String setFurnitureCategory(String furnitureCategory) {
-		return this.furnitureCategory;
-	}
 	/**
      * Creates the connection using the Drivers which get added to the classpath and 
      * checks if the connection is being made or not 
@@ -156,7 +155,6 @@ public class Main {
 	// Call initializeConnection Method (With try, catch statement)
 	// Print Out: "Enter your order request like the following example:
 	// "mesh chair, 2", and set furniture input (using the setter)
-	// Call the splitOrder function
 	/**
 	 * This our only interface with the user the welcome screne in the 
 	 * Terminal and the scanner which will take in the users request 
@@ -201,61 +199,13 @@ public class Main {
 		//splitOrder(furnitureInput);
 	}
 
-	// splitOrder:
-	// Params (FurnitureInput: String)
-	// 3 regex strings for each group
-	// Use Matcher/Pattern to set each group to the 3 data members
-	// category, type, and quantity
-	// Don't forget to convert Quantity from string to int (ParseInt)
-	// "([a-zA-Z]+) ([a-zA-Z]+), ([0-9]+)", create local data members for these
-	// Check if it is desk, lamp, chair, etc
-	// Then call the related class' constructor, and then pass in all 3
-	// local data members (the category, type, and quantity)
-	// Ex: Chair(category, type, quantity)
+
 	/**
 	 * 
 	 * @param furnitureInput Takes in the original request to make sure that it
 	 * is properly formatted into the variables created 
 	 * @throws Exception //Exception if there is wrong input by the user 
 	 */
-	// public void splitOrder(String furnitureInput) throws Exception {
-	// 	//Regex for the type
-	// 	final String REGEX = "(swing arm|[a-zA-Z]+)";
-	// 	final Pattern PATTERN = Pattern.compile(REGEX);
-	// 	//Regex for furniture category 
-	// 	final String REGEX2 = "(l+a+m+p+|c+h+a+i+r+|f+i+l+i+n+g+|d+e+s+k+)";
-	// 	final Pattern PATTERN2 = Pattern.compile(REGEX2);
-	// 	//Regex for furntiure quantity 
-	// 	final String REGEX3 = "([0-9]+)";
-	// 	final Pattern PATTERN3 = Pattern.compile(REGEX3);
-	// 	//Using the matcher 
-	// 	final Matcher MAT = PATTERN.matcher(furnitureInput);
-	// 	final Matcher MAT2 = PATTERN2.matcher(furnitureInput);
-	// 	final Matcher MAT3 = PATTERN3.matcher(furnitureInput);
-	// 	//Using the find method to group for these 
-	// 	if (MAT.find()) {
-	// 		furnitureCategory = MAT.group();
-	// 	} else {
-	// 		//If anything wrong prints this out 
-	// 		throw new Exception("The given furniture category was invalid");
-	// 	}
-	// 	//Using the find method to group for these 
-	// 	if (MAT2.find()) {
-	// 		furnitureType = MAT2.group();
-	// 	} else {
-	// 		//If anything wrong prints this out 
-	// 		throw new Exception("The given furniture type was invalid, valid furniture types include:"
-	// 		+ "chair, desk, lamp, and filing");
-	// 	}
-	// 	//Using the find method to group for these 
-	// 	if (MAT3.find()) {
-	// 		//Parses the string to convert into integer 
-	// 		furnitureQuantity = Integer.parseInt(MAT3.group());
-	// 	} else {
-	// 		//If anything wrong prints this out 
-	// 		throw new Exception("The given quantity was invalid, must enter a positive number greater than 0.");
-	// 	}
-	// }
 /**
  * 
  * @param args arguments which are taken in the main method 
