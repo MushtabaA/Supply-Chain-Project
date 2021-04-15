@@ -1,5 +1,7 @@
-package edu.ucalgary.ensf409;
 
+//Package statement used for this class
+package edu.ucalgary.ensf409;
+//Import statements used
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.ArrayList;
@@ -7,9 +9,14 @@ import java.io.IOException;
 import java.sql.*;
 import java.io.*;
 
+/**
+ * Class for the furniture category of Lamp this accounts for the cheapestPrice
+ * Also the stores which hold this furniture piece it accounts for
+ * Writes into the file as well and creates the orderform.txt for the order
+ */
 public class Lamp {
 
-    /////// DATA MEMBERS:
+    /////// The DATA MEMBERS:
     /**
      * Creates the connection to the Database relating
      * towards the MySQL server
@@ -20,7 +27,6 @@ public class Lamp {
      * ResultSet which will hold all of the rows in which can
      * later be accessed by us
      */
-
     public ResultSet rs;
 
     /**
@@ -28,15 +34,13 @@ public class Lamp {
      */
     public String DBURL;
 
-    // store the database url information
     /**
      * Database user on whose behalf the connection will be made
      */
     public String USERNAME;
 
-    // store the user's account username
     /**
-     * User's password
+     * User's password for the ability to access the database
      */
     public String PASSWORD;
 
@@ -44,41 +48,68 @@ public class Lamp {
      * Category for the Lamp which is the lamp
      */
     private String category;
+
     /**
      * The type which includes desk, study and swing arm
      */
     private String type;
+
     /**
      * The number of the furniture ordered by the user which is stored in here
      */
     private int quantity;
+
     /**
      * Stores the manufacturers for this specific part
      */
-    private StringBuilder manufacturers = new StringBuilder();
-    //This boolean will keep a track of the parts which have been bought
-    private boolean boughtParts = true;
+    public StringBuilder manufacturers = new StringBuilder();
+
     //Checks if the file is being created or not for the unitTesting purposes
     private boolean fileStatus = false;
+
     /**
      * The array list which stores the database same categories 
      */
     static ArrayList<String> input = new ArrayList<>();
-    /**
-     * The ones which get removed from the database and later on 
-     * for writing in the output file 
-     */
-    static ArrayList<String> partsOrdered = new ArrayList<>();
+    
     /**
      * If there is any repeats of the manuIDs it will store them 
      * in here to make sure the same ID is not being 
      * written twice
      */
     static ArrayList<String> repeats = new ArrayList<>();
+    
     /**
      * The totalPrice for the whole order is being stored in this int
      */
     int totalPrice;
+
+    /**
+     * Possible combinations which are found recursively and stored in this arraylist
+     */
+     static ArrayList<ArrayList<String>> possibleCombinations = new ArrayList<ArrayList<String>>();
+
+    /**
+     * Which are checked to have worked with our algorithm
+     */
+     static ArrayList<ArrayList<String>> confirmedCombinations = new ArrayList<ArrayList<String>>();
+
+    /**
+     * Prices arraylist which will store of the combinations 
+     */
+    static ArrayList<Integer> prices = new ArrayList<>();
+
+    /**
+     * To see if there has been found 
+     */
+     boolean combinationFound = false;
+    /**
+     * ManufacturerID for storing the ids, which will be later 
+     * Used for writing into the file 
+     */
+    ArrayList<String> manufacturerIDs = new ArrayList<>();
+
+
     //Start of the getters and setters which get the public variables 
     public String getDBURL() {
         return this.DBURL;
@@ -104,7 +135,7 @@ public class Lamp {
         this.PASSWORD = PASSWORD;
     }
     // store the user's account password
-
+           
     public String getCategory() {
         return this.category;
     }
@@ -137,13 +168,12 @@ public class Lamp {
         this.totalPrice = totalPrice;
     }
 
-    ////// METHODS:
-    // Default Lamp CTOR:
+    //Default Lamp constructor:
     Lamp() {
-        // Does nothing
+        //Does nothing
     }
 
-    /**
+  /**
    * Lamp constructor takes in 6 parameters for creating the Lamp and intializing it 
    */
     Lamp(String category, String type, int quantity, String dburl, String username, String password) {
@@ -160,8 +190,10 @@ public class Lamp {
      */
     public void initializeConnection() {
         try {
+            //Uses the drivers which will create the connection 
             createConnection = DriverManager.getConnection(DBURL, USERNAME, PASSWORD);
         } catch (SQLException e) {
+            //If not able to prints this message out 
             System.out.println("Connection was failed try again.");
             e.printStackTrace();
         }
@@ -173,18 +205,25 @@ public class Lamp {
      * No parameters for this method
      * Calls most of the methods in the order which they fulfill the requirement 
      */
-
     public void callEverything() throws IOException {
         initializeConnection();
         getEverything(category);
-        sortPrice(input);
-        totalPrice = lowestPrice();
-        if (boughtParts) {
+        getManufacturers(category);
+        getCombinations(input, input.size());
+        findingCombinations();
+        //Checks if the parts are being taken in the order if not
+        //The else case would write into the file the manufacturers 
+        if (combinationFound) {
+        //Sorts the prices from lowest to highest when gathered 
+        sortLowestPrice();
+        totalPrice = getLowestPrice();
             removeParts();
-            System.out.println("Look at the output.txt file for the full furniture order.");
+            System.out.println("Look at the orderform.txt file for the full furniture order.");
             String originalRequest = getCategory() + " " + getType() + ", " + getQuantity();
-            writeFileLampOrder(originalRequest, totalPrice); // Without manufacturers
+            writeFileLampOrder(originalRequest, totalPrice); //Without manufacturers
         } else {
+            //Calls this method which writes into the orderform file 
+            suggestedManufacturer();
             writeFileSuggestedManu();
         }
     }
@@ -200,45 +239,112 @@ public class Lamp {
         try {
             stmnt = createConnection.createStatement();
             ResultSet rs = stmnt.executeQuery("SELECT * FROM LAMP WHERE Type = " + "'" + category + "'");
-
+            //This loop will end up getting all of the instances of the category and
+            //Store them in this format
             while (rs.next()) {
-                input.add(rs.getString("Price") + " " + rs.getString("ID") + " " + rs.getString("ManuID"));
+                input.add(rs.getString("ID"));
             }
 
             stmnt.close();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
     /**
-     * 
-     * @param input Takes in this array list which was taken from the user in that specific 
-     * format which we had desired in the getEverything method and then using regex
-     * to get the price from this arrayList which then sorts it from lowest to highest
-     * Using sorting algorithm called BubbleSort 
+     * Is adding to the arraylist of the manufactueresID which will keep
+     * a track of ManuIDs which are being used to be displayed 
+     * If the order is unsucessul due to the inventory 
+     * @param category Takes in the category which the user passed into
+     * their original request helps with accessing the database 
      */
-
-    public void sortPrice(ArrayList<String> input) {
-        for (int i = input.size(); i > 0; i--) {
-            for (int j = 0; j < input.size() - 1; j++) {
-                String REGEX = "[0-9]+";
-                Pattern PATTERN = Pattern.compile(REGEX);
-                Matcher MAT = PATTERN.matcher(input.get(j));
-                Matcher MAT2 = PATTERN.matcher(input.get(j + 1));
-                if (MAT.find() && MAT2.find()) {
-                    if (Integer.parseInt(MAT.group()) > Integer.parseInt(MAT2.group())) {
-                        String tmp = input.get(j);
-                        String tmp2 = input.get(j + 1);
-                        input.set(j, tmp2);
-                        input.set(j + 1, tmp);
-                    }
-                }
+    public void getManufacturers(String category) {
+        Statement stmnt;
+        try {
+            //Makes a connection via a statement 
+            stmnt = createConnection.createStatement();
+            //Uses the result set to gather data about the lamp which is for the specfic
+            //Category as requested by the user 
+            ResultSet rs = stmnt.executeQuery("SELECT * FROM LAMP WHERE Type = " + "'" + category + "'");
+            //This loop will end up getting all of the instances of the category and
+            //Store them in this format
+            while (rs.next()) {
+                //Adds to that arrayList of the manuIDs 
+                manufacturerIDs.add(rs.getString("ManuID"));
             }
+
+            stmnt.close();
+            //If something goes wrong then will catch it while accessing the database
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
+    
+    /**
+     *.The input array copies the size of the of the parts we have in order to make 
+     * for example a study lamp. Then it will just add 0s in the array list. 
+     * The posssible combinations will be the list of list which will have the ones 
+     * which are find from the combinations method which looks for by using 
+     * a mathematical approach of a famous leetcode problem subsets of sets 
+     * to derive a recursion solution which implements dividing the problem 
+     * into smaller parts. 
+     * @param currentCombinations This arraylist is being passed to keep a track of the 
+     * combinations which can be possibly made from the inventory we receive 
+     * @param size this is the amount of inventory which is getting into from
+     * the database the amount of parts we were able to select from the idString 
+     */
+    static void getCombinations(ArrayList<String> currentCombinations, int size) {
+        //The input array which will have the same size as the 
+        //Currentcombinations
+        ArrayList<String> input = new ArrayList<>();
+        int i = 0;
+        //Fills them in with 0s as strings 
+        while(i < size) {
+            input.add("0");
+            i++;
+        }
+        //Counter to keep a track of the recursion base case and will
+        //Stop if it fails this requirement 
+        int counter = 0;
+        while(counter < currentCombinations.size()) {
+            combinations(currentCombinations, input, 0, size - 1, 0, counter);
+            counter++;
+        }
 
-    ////////// New Method for numberOfParts
+        possibleCombinations.add(currentCombinations);
+    }
+
+    /**
+     * This method for combinations is using the another temp array list to find the combination and set 
+     * it to the input array which is passed into this method 
+     * @param currentCombinations This arraylist is being passed to keep a track of the 
+     * combinations which can be possibly made from the inventory we receive 
+     * @param input This is the input which is getting passed from the getCombination method which was the copied array
+     * @param start The begining of the arraylist which is at 0
+     * @param end This is the near last of the arraylist which gets passed as size - 1 in the getCombination to avoid 
+     * IndexOutOfBounds 
+     * @param index The current position of the array list is keep a track same as the start for right now 
+     * @param counter The counter which will be compared 
+     */
+    static void combinations(ArrayList<String> currentCombinations, ArrayList<String> input, int start, int end, int index, int counter) {
+        if (index == counter)
+        {
+            int j = 0;
+            ArrayList<String> combinationsInner = new ArrayList<>();
+            while(j < counter) {
+                combinationsInner.add(input.get(j));
+                j++;
+            }
+            possibleCombinations.add(combinationsInner);
+        }
+
+        for (int i = start; i <= end; i++)
+        {
+            String tmp = currentCombinations.get(i);
+            input.set(index, tmp);
+            combinations(currentCombinations, input, i + 1, end, index + 1, counter);
+        }
+    }
+    
     /**
      * 
      * @param quantity Takes in the user desired furniture pieces  
@@ -250,180 +356,205 @@ public class Lamp {
         return value;
     }
 
-    ///////// New Method for checkPrice:
     /**
-     * 
-     * @return Determines the lowestPrice takes in the factor of the kneelingprice
-     * Which has a different method due to its requriements 
-     * And has a returnPrice which is the lowest possible in
-     * the combinations 
+     * Takes in no parameters and used another confirmedCombinations arraylist which is used after checking
+     * through the possible combinations and adding them to the partsIDs as well. 
+     * Also it has the priceSum which will keep a track of price of the each confirmed 
+     * combination which was found from the select lamp table. 
      */
-
-    public int lowestPrice() {
-        return checkPriceAll(input);
-    }
-    /**
-     * 
-     * @param input Takes in that input array made earlier in get everything 
-     * @return Returns the lowest price possible in the combinations 
-     * This category of chair will check for which is not including
-     * The kneeling and is for the desk, study and swing arm
-     * Uses regex to sepearte this arrayList 
-     * Also has multiple different edge cases which
-     * Is taken in account for when collecting
-     * The combinations 
-     */
-
-    public int checkPriceAll(ArrayList<String> input) {
-        int priceSum = 0;
+    public void findingCombinations() {
+        //The number of maxParts which will be getting used from the method 
+        // of numberOfParts which the user put the quanity in. 
         int maxParts = numberOfParts(quantity);
+        //The amount of each furniture piece to make one lamp 
         int numOfBases = 0;
         int numOfBulbs = 0;
-        int trigger = 0;
-        int noCounter = 0;
-        boolean empty = false;
 
-        for (int i = 0; i < input.size(); i++) {
-
-            if (numOfBases == maxParts && numOfBulbs == maxParts) {
-                break;
+        //The sum of the combination 
+        int priceSum = 0;
+        //The combinations which were received from the method earlier 
+        //This now will do more testing to ensure we have the best 
+        //Combination desired for the lowest price 
+        for (int a = 0; a < possibleCombinations.size(); a++) {
+            //Will keep a track of the parts in the combination 
+            ArrayList<String> partIDs = new ArrayList<>();
+            //Amount of the legs, arms, seats and cushions which
+            //Are later on incremented 
+            numOfBases = 0;
+            numOfBulbs = 0;
+            priceSum = 0;
+              //Takes the specific combination and adds all of the parts ID numbers 
+              //To that array last to be accessed by the database later 
+            for (int j = 0; j < possibleCombinations.get(a).size(); j++) {
+                partIDs.add(possibleCombinations.get(a).get(j));
             }
+            //Now this will traverse through the partsID to get them 
+            for (int i = 0; i < partIDs.size(); i++) {
+                String idString = partIDs.get(i);
 
-            final String REGEX = "([A-Z])\\w+";
-            final String REGEX2 = "[0-9]+";
-            final Pattern PATTERN = Pattern.compile(REGEX);
-            final Pattern PATTERN2 = Pattern.compile(REGEX2);
-            final Matcher MAT = PATTERN.matcher(input.get(i));
-            final Matcher MAT2 = PATTERN2.matcher(input.get(i));
-
-            if (MAT.find() && MAT2.find()) {
-                String idString = MAT.group();
-                int priceInt = Integer.parseInt(MAT2.group());
                 try {
+                    //Statement to make a new connection to the database 
                     Statement stmnt2 = createConnection.createStatement();
+                    //The result set which will look at the rows to gather data 
                     ResultSet rs2 = stmnt2.executeQuery("SELECT * FROM LAMP WHERE ID = " + "'" + idString + "'");
-
-                    while (rs2.next()) {
-                    trigger = 0;
-                    noCounter = 0;
-
-                        if (rs2.getString("Base").equals("N") && rs2.getString("Bulb").equals("N")) {
-                            empty = true;
-                            break;
-                        }
+                    //Will simply now just check for Yes in that one part row and then increment them. 
+                    while(rs2.next()) {
+                         //Checks for the lamps base and what their status 
+                        //Is in the database 
                         if (rs2.getString("Base").equals("Y")) {
                             numOfBases++;
-                            if (numOfBases > maxParts) {
-                                numOfBases--;
-                                trigger += 1;
-                            }
                         }
-                        if (rs2.getString("Base").equals("N")) {
-                            noCounter++;
-                        }
+                         //Checks for the lamps bulbs and what their status 
+                        //Is in the database 
                         if (rs2.getString("Bulb").equals("Y")) {
                             numOfBulbs++;
-                            if (numOfBulbs > maxParts) {
-                                numOfBulbs--;
-                                trigger += 1;
-                            }
                         }
-                        if (rs2.getString("Bulb").equals("N")) {
-                            noCounter++;
-                        }
+                        //Increments the sum by looking at the price for the part 
+                        priceSum += rs2.getInt("Price");
                     }
-                    if (empty) {
-                        empty = false;
-                        continue;
-                    }
-                    if (trigger == 2 || trigger + noCounter == 2) {
-                        noCounter = 0;
-                        trigger = 0;
-                        continue;
-                    } else {
-                        if (numOfBases > 0 || numOfBulbs > 0) {
-                            priceSum += priceInt;
-                            partsOrdered.add(idString);
-                        }
-                    }
-                    stmnt2.close();
+                    //WIll catch the exception if something goes wrong 
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
             }
+            //Checks if the legs equal the maxParts or not 
+            //If it is sucessfull it will add to the confirmedCombinations arraylist to be 
+            //Used by the writeFile method 
+            //Also adds the prices and sets the boolean to true as well. 
+            if (numOfBases >= maxParts && numOfBulbs >= maxParts) {
+                confirmedCombinations.add(partIDs);
+                prices.add(priceSum);
+                combinationFound = true;
+            }
         }
-
-        if (numOfBases != maxParts || numOfBulbs != maxParts) {
-            boughtParts = false;
-            suggestedManufacturer();
+        
+    }
+    /**
+     * Sorts the price ArrayList from lowest to highest using a famous
+     * known sorting algorithm bubble sort. 
+     * Two temp arraylists to swap the elements in the array and 
+     * ensures there is no overlap 
+     */
+    public void sortLowestPrice() {
+        for (int i = prices.size(); i > 0; i--) {
+            for (int j = 0; j < prices.size() - 1; j++) {
+                    if (prices.get(j) > prices.get(j + 1)) {
+                        int tmp = prices.get(j);
+                        int tmp2 = prices.get(j + 1);
+                        prices.set(j, tmp2);
+                        prices.set(j + 1, tmp);
+                        //For swapping purposes we have these two array lists which will 
+                        //Make sure the elements are being rightly ordered 
+                        ArrayList<String> tmp3 = confirmedCombinations.get(j);
+                        ArrayList<String> tmp4 = confirmedCombinations.get(j + 1);
+                        confirmedCombinations.set(j, tmp4);
+                        confirmedCombinations.set(j + 1, tmp3);   
+                }
+            }
         }
-        return priceSum;
     }
 
+    /**
+     * Just a getter to be used when needed the lowest price 
+     * @return The price from the arrayList which is at the first
+     * Index also the lowest 
+     */
+    public int getLowestPrice() {
+        return prices.get(0);
+    }
+
+   
+    /**
+     * Will check for the manufactueres using their ID
+     * Collected in the earlier input ArrayList 
+     * And then checks if they are repeated in the order so 
+     * They are not written twice in the orderform file 
+     */
     public void suggestedManufacturer() {
-
+        //Try and catch block for the the terminal printing 
         try {
+            //This will get printed to the console before the manufacturers string 
             System.out.println("Order cannot be fulfilled based on current inventory.");
-            System.out.println("Suggested Manufacturers can also be viewed in the output.txt file.");
+            System.out.print("Suggested Manufacturers can also be viewed in the orderform.txt file.");
             System.out.println("The suggested Manufacturers are: ");
-            for (int i = 0; i < input.size(); i++) {
-                final String REGEX3 = "([0-9]+$)";
-                final Pattern PATTERN3 = Pattern.compile(REGEX3);
-                final Matcher MAT3 = PATTERN3.matcher(input.get(i));
+            //For loop which will iterate through the input array originally 
+            for (int i = 0; i < manufacturerIDs.size(); i++) {
+                
+                //Boolean created to make sure it is not repeated 
                 boolean isRepeat = false;
-                if (MAT3.find()) {
-                    String manuID = MAT3.group();
-
+                
                     Statement stmnt = createConnection.createStatement();
+                    //Quert which will select everything from it 
                     rs = stmnt.executeQuery("SELECT * FROM MANUFACTURER");
-
+                    //This going through the repeats array and if there 
+                    //One seen then it will break out of this 
                     if (i > 0) {
                         for (int j = 0; j < repeats.size(); j++) {
-                            if (manuID.equals(repeats.get(j))) {
+                            if (manufacturerIDs.get(i).equals(repeats.get(j))) {
                                 isRepeat = true;
                                 break;
                             }
                         }
                     }
+                    //If there is a repeat then it will go again
                     if (isRepeat) {
                         continue;
                     }
-
+                    //This will store the manuID in the String Builder
                     while (rs.next()) {
-                        if (rs.getString("ManuID").equals(manuID)) {
+                        if (rs.getString("ManuID").equals(manufacturerIDs.get(i))) {
                             manufacturers.append("Name: " + rs.getString("Name") + "\n");
-                            repeats.add(manuID);
+                            repeats.add(manufacturerIDs.get(i));
                         }
                     }
-                }
+                
             }
         } catch (SQLException e) {
             // Does nothing
         }
+        //Prints the string builder out by converting it to a string
         System.out.println(manufacturers.toString());
-
     }
-
+    /**
+     * Deletion of the parts which have been ordered 
+     * Uses the array generated in the checkPriceAll method 
+     * Which then later on will update the database 
+     * So we don't buy the same parts again and again
+     */
     public void removeParts() {
+        ArrayList<String> removedParts = confirmedCombinations.get(0);
         Statement stmnt;
         try {
-            for (int i = 0; i < partsOrdered.size(); i++) {
+            //For loop which will iterate through the arraylist of parts which
+            //The user will buy in order to complete the order 
+            for (int i = 0; i < removedParts.size(); i++) {
                 stmnt = createConnection.createStatement();
-                stmnt.executeUpdate("DELETE FROM LAMP WHERE ID = " + "'" + partsOrdered.get(i) + "'");
+                //Query similar to Assignment 9
+                stmnt.executeUpdate("DELETE FROM LAMP WHERE ID = "+ "'" + removedParts.get(i) + "'");
                 stmnt.close();
             }
         }
-
+        //If there is something gone wrong then this message will be printed to 
+        //To prompt the user 
         catch (SQLException e) {
-            System.out.println("Deleting the part was unsucessful");
+            System.out.println("Deleting the part was unsuccessful");
             e.printStackTrace();
         }
     }
-
+    /**
+     * This writeFile method is for order sucessful completetion and is only 
+     * Called if the order requirements are met 
+     * @param originalRequest The user request which inputed in the terminal is used here 
+     * @param totalPrice Price which we ended up calculating based on our algorithm 
+     * @return The boolean which checks if the file is created 
+     * @throws IOException If the file is not created then throws this exception
+     */
     public boolean writeFileLampOrder(String originalRequest, int totalPrice) throws IOException {
         try {
+            //File name which will be created with 
             FileWriter fw = new FileWriter("orderform.txt");
             BufferedWriter bw = new BufferedWriter(fw);
+            //This writes into the file using the BufferedWriter
             bw.write("Furniture Order Form");
             bw.write('\n');
             bw.write("Faculty Name: ");
@@ -435,6 +566,8 @@ public class Lamp {
             bw.write("Original Request: " + originalRequest);
             bw.write('\n');
             bw.write("Items Ordered" + "\n");
+            //This will iterate through the parts which are being ordered
+            ArrayList<String> partsOrdered = confirmedCombinations.get(0); 
             for (int i = 0; i < partsOrdered.size(); i++) {
                 bw.write("ID: " + partsOrdered.get(i) + "\n");
             }
@@ -443,11 +576,17 @@ public class Lamp {
             bw.close();
             fw.close();
         } catch (Exception e) {
-            System.out.println("Failed to write to the output file");
+            System.out.println("Failed to write to the orderform file");
         }
         return fileStatus = true;
     }
-
+    /**
+     * Method if the order is not able to completed to write to the file 
+     * And then this will use the String Builder and convert 
+     * It to a proper string for the user to read 
+     * @return The boolean which checks if the file is created
+     * @throws IOException If the file is not created then throws this exception
+     */
     public boolean writeFileSuggestedManu() throws IOException {
         try {
             FileWriter fw = new FileWriter("orderform.txt");
@@ -461,9 +600,8 @@ public class Lamp {
             bw.close();
             fw.close();
         } catch (Exception e) {
-            System.out.println("Failed to write to the output file");
+            System.out.println("Failed to write to the orderform file");
         }
         return fileStatus = true;
     }
-
 }

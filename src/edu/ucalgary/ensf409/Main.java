@@ -21,15 +21,15 @@ public class Main {
 	/**
 	 * Database url of the following format jdbc:subprotocol:subname
 	 */
-	public String DBURL; // store the database url information
+	public String dburl; // store the database url information
 	/**
 	 * Database user on whose behalf the connection will be made
 	 */
-	public String USERNAME; // store the user's account username
+	public String username; // store the user's account username
 	/**
 	 * User's password
 	 */
-	public String PASSWORD; // store the user's account password
+	public String password; // store the user's account password
 
 	public String furnitureInput;
 	//Getters and setters for the furniture input 
@@ -77,7 +77,7 @@ public class Main {
 	 * @return the database URL is given back
 	 */
 	public String getDburl() {
-		return this.DBURL;
+		return this.dburl;
 	}
 
 	/**
@@ -86,7 +86,7 @@ public class Main {
 	 * @return the username of the database user
 	 */
 	public String getUsername() {
-		return this.USERNAME;
+		return this.username;
 	}
 
 	/**
@@ -95,7 +95,7 @@ public class Main {
 	 * @return the password of the database user
 	 */
 	public String getPassword() {
-		return this.PASSWORD;
+		return this.password;
 	}
 
 	// Gets Furniture type
@@ -120,10 +120,6 @@ public class Main {
 
 	public String setFurnitureCategory(String furnitureCategory) {
 		return this.furnitureCategory;
-	}
-
-	public int setFurnitureQuantity(String furnitureQuantity) {
-		return this.furnitureQuantity;
 	}
 	/**
      * Creates the connection using the Drivers which get added to the classpath and 
@@ -176,22 +172,33 @@ public class Main {
 		sc = new Scanner(System.in);
 		System.out.println("Enter Username for the Database access: ");
 		//Stores the username which the user will enter in 
-		this.USERNAME = sc.nextLine();
+		this.username = sc.nextLine();
+		this.username = username.trim();
 
 		System.out.println("Enter Password for the Database access: ");
 		//Stores the password the user will enter in 
-		this.PASSWORD = sc.nextLine();
+		this.password = sc.nextLine();
+		this.password = password.trim();
 		//Prints the completed the URL out on the screen 
 		System.out.println("The URL for the connection is this following: jdbc:mysql://localhost/inventory" + "/"
-				+ USERNAME + "/" + PASSWORD);
-		this.DBURL = "jdbc:mysql://localhost/inventory";
+				+ username + "/" + password);
+		this.dburl = "jdbc:mysql://localhost/inventory";
 		//Asks for the users request 
-		System.out.println("Enter your order request like the following example: mesh chair, 1");
-		this.furnitureInput = sc.nextLine();
+		System.out.println("Enter the furniture category, examples include: mesh, ergonomic, kneeling, etc:");
+		this.furnitureCategory = sc.nextLine();
+		this.furnitureCategory = furnitureCategory.toLowerCase().trim();
+		System.out.println("Enter the furniture type, examples include: chair, desk, filing, lamp:");
+		this.furnitureType = sc.nextLine();
+		this.furnitureType = furnitureType.toLowerCase().trim();
+		System.out.println("Enter the furniture quantity, must be a positive integer greater than 0:");
+		this.furnitureQuantity = Integer.parseInt(sc.nextLine().trim());
+		
+		
+		//this.furnitureInput = sc.nextLine();
 		//If any upper case accidentatly is inputed then will convert them 
-		furnitureInput.toLowerCase();
+		//furnitureInput.toLowerCase();
 		//Calls the split order method which will use regex to sepearte 
-		splitOrder(furnitureInput);
+		//splitOrder(furnitureInput);
 	}
 
 	// splitOrder:
@@ -211,44 +218,44 @@ public class Main {
 	 * is properly formatted into the variables created 
 	 * @throws Exception //Exception if there is wrong input by the user 
 	 */
-	public void splitOrder(String furnitureInput) throws Exception {
-		//Regex for the type
-		final String REGEX = "(swing arm|[a-zA-Z]+)";
-		final Pattern PATTERN = Pattern.compile(REGEX);
-		//Regex for furniture category 
-		final String REGEX2 = "(l+a+m+p+|c+h+a+i+r+|f+i+l+i+n+g+|d+e+s+k+)";
-		final Pattern PATTERN2 = Pattern.compile(REGEX2);
-		//Regex for furntiure quantity 
-		final String REGEX3 = "([0-9]+)";
-		final Pattern PATTERN3 = Pattern.compile(REGEX3);
-		//Using the matcher 
-		final Matcher MAT = PATTERN.matcher(furnitureInput);
-		final Matcher MAT2 = PATTERN2.matcher(furnitureInput);
-		final Matcher MAT3 = PATTERN3.matcher(furnitureInput);
-		//Using the find method to group for these 
-		if (MAT.find()) {
-			furnitureCategory = MAT.group();
-		} else {
-			//If anything wrong prints this out 
-			throw new Exception("The given furniture category was invalid");
-		}
-		//Using the find method to group for these 
-		if (MAT2.find()) {
-			furnitureType = MAT2.group();
-		} else {
-			//If anything wrong prints this out 
-			throw new Exception("The given furniture type was invalid, valid furniture types include:"
-					+ "chair, desk, lamp, and filing");
-		}
-		//Using the find method to group for these 
-		if (MAT3.find()) {
-			//Parses the string to convert into integer 
-			furnitureQuantity = Integer.parseInt(MAT3.group());
-		} else {
-			//If anything wrong prints this out 
-			throw new Exception("The given quantity was invalid, must enter a positive number greater than 0.");
-		}
-	}
+	// public void splitOrder(String furnitureInput) throws Exception {
+	// 	//Regex for the type
+	// 	final String REGEX = "(swing arm|[a-zA-Z]+)";
+	// 	final Pattern PATTERN = Pattern.compile(REGEX);
+	// 	//Regex for furniture category 
+	// 	final String REGEX2 = "(l+a+m+p+|c+h+a+i+r+|f+i+l+i+n+g+|d+e+s+k+)";
+	// 	final Pattern PATTERN2 = Pattern.compile(REGEX2);
+	// 	//Regex for furntiure quantity 
+	// 	final String REGEX3 = "([0-9]+)";
+	// 	final Pattern PATTERN3 = Pattern.compile(REGEX3);
+	// 	//Using the matcher 
+	// 	final Matcher MAT = PATTERN.matcher(furnitureInput);
+	// 	final Matcher MAT2 = PATTERN2.matcher(furnitureInput);
+	// 	final Matcher MAT3 = PATTERN3.matcher(furnitureInput);
+	// 	//Using the find method to group for these 
+	// 	if (MAT.find()) {
+	// 		furnitureCategory = MAT.group();
+	// 	} else {
+	// 		//If anything wrong prints this out 
+	// 		throw new Exception("The given furniture category was invalid");
+	// 	}
+	// 	//Using the find method to group for these 
+	// 	if (MAT2.find()) {
+	// 		furnitureType = MAT2.group();
+	// 	} else {
+	// 		//If anything wrong prints this out 
+	// 		throw new Exception("The given furniture type was invalid, valid furniture types include:"
+	// 		+ "chair, desk, lamp, and filing");
+	// 	}
+	// 	//Using the find method to group for these 
+	// 	if (MAT3.find()) {
+	// 		//Parses the string to convert into integer 
+	// 		furnitureQuantity = Integer.parseInt(MAT3.group());
+	// 	} else {
+	// 		//If anything wrong prints this out 
+	// 		throw new Exception("The given quantity was invalid, must enter a positive number greater than 0.");
+	// 	}
+	// }
 /**
  * 
  * @param args arguments which are taken in the main method 
@@ -291,26 +298,29 @@ public class Main {
 		//Will call the constructors and pass in the information collected 
 		if (main.getFurnitureType().equals("chair")) {
 			chair = new Chair(main.getFurnitureCategory(), main.getFurnitureType(), main.getFurnitureQuantity(),
-					main.DBURL, main.USERNAME, main.PASSWORD);
+					main.dburl, main.username, main.password);
 			//Calls the everything method which has in order of how the program should be run 
 			chair.callEverything();
-
+		//Checks if it is chair, desk, lamp or the filing 
+		//Will call the constructors and pass in the information collected 
 		} else if (main.getFurnitureType().equals("desk")) {
 			desk = new Desk(main.getFurnitureCategory(), main.getFurnitureType(), main.getFurnitureQuantity(),
-					main.DBURL, main.USERNAME, main.PASSWORD);
-
+					main.dburl, main.username, main.password);
+			//Calls the everything method which has in order of how the program should be run 
 			desk.callEverything();
-
+		//Checks if it is chair, desk, lamp or the filing 
+		//Will call the constructors and pass in the information collected 
 		} else if (main.getFurnitureType().equals("lamp")) {
 			lamp = new Lamp(main.getFurnitureCategory(), main.getFurnitureType(), main.getFurnitureQuantity(),
-					main.DBURL, main.USERNAME, main.PASSWORD);
-
+					main.dburl, main.username, main.password);
+			//Calls the everything method which has in order of how the program should be run 
 			lamp.callEverything();
-
+		//Checks if it is chair, desk, lamp or the filing 
+		//Will call the constructors and pass in the information collected 
 		} else if (main.getFurnitureType().equals("filing")) {
 			filing = new Filing(main.getFurnitureCategory(), main.getFurnitureType(), main.getFurnitureQuantity(),
-					main.DBURL, main.USERNAME, main.PASSWORD);
-
+					main.dburl, main.username, main.password);
+			//Calls the everything method which has in order of how the program should be run 
 			filing.callEverything();
 
 		}
